@@ -1,17 +1,17 @@
-from HeapVariations import IHeap
-from HeapVariations import BinaryTreeInArrayBasedHeap
-from HeapVariations import SimpleArrayBasedHeap
+import IHeap
+import BinaryTreeInArrayBasedHeap
+import SimpleArrayBasedHeap
 
 import random
 import time
 
 
-def modifyHeap(heap, repeatRange, action):
+def modifyHeap(heap, action):
     if action == "add":
-        for repeat in range(repeatRange):
+        for repeat in range(15000):
             heap.add(random.randrange(0, 100000))
     elif action == "remove":
-        for repeat in range(repeatRange):
+        for repeat in range(1500):
             print(heap.getAndRemoveSmallest())
 
 
@@ -30,26 +30,26 @@ def benchmarkHeapImplementation(heapImplementation):
 
 
 def executeQueries(h):
-    modifyHeap(h, random.randrange(10000, 20000), "add")
-    modifyHeap(h, random.randrange(1000, 2000), "remove")
-    modifyHeap(h, random.randrange(10000, 20000), "add")
-    modifyHeap(h, random.randrange(10000, 20000), "add")
-    modifyHeap(h, random.randrange(1000, 2000), "remove")
-    modifyHeap(h, random.randrange(10000, 20000), "add")
-    modifyHeap(h, random.randrange(1000, 2000), "remove")
-    modifyHeap(h, random.randrange(1000, 2000), "remove")
-    modifyHeap(h, random.randrange(10000, 20000), "add")
-    modifyHeap(h, random.randrange(1000, 2000), "remove")
+    modifyHeap(h, "add")
+    modifyHeap(h, "remove")
+    modifyHeap(h, "add")
+    modifyHeap(h, "add")
+    modifyHeap(h, "remove")
+    modifyHeap(h, "add")
+    modifyHeap(h, "remove")
+    modifyHeap(h, "remove")
+    modifyHeap(h, "add")
+    modifyHeap(h, "remove")
 
     print(h.heapList)
 
 
 def main():
-    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap.BinaryTreeInArrayBasedHeap([random.randrange(0, 100) for _ in range(10)]))
+    benchmarkHeapImplementation(SimpleArrayBasedHeap.SimpleArrayBasedHeap([random.randrange(0, 100) for _ in range(10)]))
 
     # Results when run 10 times:
-    #   SimpleArrayBasedHeap: 2.062203
-    #   BinaryTreeInArrayBasedHeap: 1.40439
+    #   SimpleArrayBasedHeap: 4.410261s
+    #   BinaryTreeInArrayBasedHeap: 1.394079s
 
 if __name__ == '__main__':
     main()

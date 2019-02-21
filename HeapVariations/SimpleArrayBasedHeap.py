@@ -1,5 +1,5 @@
-from HeapVariations import IHeap
-from HeapVariations import HeapIsEmptyException
+import IHeap
+import HeapIsEmptyException
 from typing import List
 
 
