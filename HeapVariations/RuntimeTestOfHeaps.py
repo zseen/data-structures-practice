@@ -42,9 +42,6 @@ def executeQueries(h):
 def main():
     benchmarkHeapImplementation(SimpleArrayBasedHeap(INITIAL_ELEMENTS_LIST))
 
-    # Results when run 10 times:
-    #   SimpleArrayBasedHeap: 3.3315
-    #   BinaryTreeInArrayBasedHeap: 0.9552
 
 if __name__ == '__main__':
     main()
