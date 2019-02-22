@@ -1,17 +1,15 @@
-import IHeap
+from IHeap import IHeap
 import HeapIsEmptyException
 from typing import List
 
 
-class SimpleArrayBasedHeap(IHeap.IHeap):
+class SimpleArrayBasedHeap(IHeap):
     def __init__(self, heapList: List):
         self.heapList: List = sorted(heapList)
         self.isHeapSorted: bool = True
 
     def isHeapEmpty(self):
-        if len(self.heapList) == 0:
-            return True
-        return False
+        return len(self.heapList) == 0
 
     def getAndRemoveSmallest(self):
         if self.isHeapEmpty():

@@ -1,9 +1,14 @@
 import IHeap
-import BinaryTreeInArrayBasedHeap
-import SimpleArrayBasedHeap
+from BinaryTreeInArrayBasedHeap import BinaryTreeInArrayBasedHeap
+from SimpleArrayBasedHeap import SimpleArrayBasedHeap
 
 import random
 import time
+
+
+INITIAL_ELEMENTS_LIST = [random.randrange(0, 100) for _ in range(10)]
+TEST_RANGE = 10
+NUM_DIGITS_AFTER_DECIMAL_POINT = 4
 
 
 def modifyHeap(heap, action):
@@ -12,13 +17,12 @@ def modifyHeap(heap, action):
             heap.add(random.randrange(0, 100000))
     elif action == "remove":
         for repeat in range(1500):
-            print(heap.getAndRemoveSmallest())
+            heap.getAndRemoveSmallest()
 
 
 def benchmarkHeapImplementation(heapImplementation):
     runTimes = []
-    testRange = 10
-    for test in range(testRange):
+    for test in range(TEST_RANGE):
         start = time.clock()
 
         executeQueries(heapImplementation)
@@ -26,30 +30,21 @@ def benchmarkHeapImplementation(heapImplementation):
         end = time.clock()
         runTimes.append(end - start)
 
-    print(round(sum(runTimes) / testRange, 6))
+    print(round(sum(runTimes) / TEST_RANGE, NUM_DIGITS_AFTER_DECIMAL_POINT))
 
 
 def executeQueries(h):
-    modifyHeap(h, "add")
-    modifyHeap(h, "remove")
-    modifyHeap(h, "add")
-    modifyHeap(h, "add")
-    modifyHeap(h, "remove")
-    modifyHeap(h, "add")
-    modifyHeap(h, "remove")
-    modifyHeap(h, "remove")
-    modifyHeap(h, "add")
-    modifyHeap(h, "remove")
-
-    print(h.heapList)
+    with open("TestingActions.txt") as ta:
+        for action in ta:
+            modifyHeap(h, action.strip())
 
 
 def main():
-    benchmarkHeapImplementation(SimpleArrayBasedHeap.SimpleArrayBasedHeap([random.randrange(0, 100) for _ in range(10)]))
+    benchmarkHeapImplementation(SimpleArrayBasedHeap(INITIAL_ELEMENTS_LIST))
 
     # Results when run 10 times:
-    #   SimpleArrayBasedHeap: 4.410261s
-    #   BinaryTreeInArrayBasedHeap: 1.394079s
+    #   SimpleArrayBasedHeap: 3.3315
+    #   BinaryTreeInArrayBasedHeap: 0.9552
 
 if __name__ == '__main__':
     main()
