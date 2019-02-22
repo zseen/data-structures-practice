@@ -1,4 +1,4 @@
-from Heap.HeapVariations import AbstractClassHeap
+import IHeap
 from typing import List
 import time
 
@@ -10,21 +10,25 @@ class Node:
         self.right = None
 
 
-class Heap(AbstractClassHeap.AbstractHeap):
+class Heap(IHeap.IHeap):
     def __init__(self):
         self.root = None
 
     def addElementToHeap(self, value):
         if self.root is None:
             self.root = Node(value)
+            #print("root:", self.root.value)
         elif value < self.root.value:
             oldNode = self.root
             self.root = Node(value)
+            #print("root:", self.root.value)
             self._insert(oldNode.value, self.root)
         else:
             self._insert(value, self.root)
 
     def _insert(self, value, currentNode):
+        #print("value:", value)
+        #print("currNodeVal: ", currentNode.value)
         if currentNode.value < value:
             if currentNode.left is None:
                 currentNode.left = Node(value)
@@ -35,17 +39,26 @@ class Heap(AbstractClassHeap.AbstractHeap):
         else:
             oldNode = currentNode
             currentNode = Node(value)
-            self._insert(oldNode.value, currentNode.left)
-
+            self._insert(oldNode.value, currentNode.right)
 
 
 
     def removeAndReturnSmallestElement(self):
         oldRoot = self.root
-        if oldRoot.left.value < oldRoot.right.value:
-            self.root = oldRoot.left
+
+        if not oldRoot.left:
+            if oldRoot.right:
+                self.root = oldRoot.right
+                return oldRoot.value
+        elif not oldRoot.right:
+            if oldRoot.left:
+                self.root = oldRoot.left
+                return oldRoot.value
         else:
-            self.root = oldRoot.right
+            if oldRoot.left.value < oldRoot.right.value:
+                self.root = oldRoot.left
+            else:
+                self.root = oldRoot.right
         return oldRoot.value
 
 
@@ -62,10 +75,13 @@ def main():
     h.addElementToHeap(5)
 
     h.addElementToHeap(6)
-    h.removeAndReturnSmallestElement()
+    print("smallest: ", h.removeAndReturnSmallestElement())
+    print("smallest: ", h.removeAndReturnSmallestElement())
+    print("smallest: ", h.removeAndReturnSmallestElement())
+    print("smallest: ", h.removeAndReturnSmallestElement())
     h.addElementToHeap(7)
-    h.removeAndReturnSmallestElement()
-    print(h.root.value)
+    #h.removeAndReturnSmallestElement()
+    #print("new root", h.root.value)
 
 
 if __name__ == '__main__':
