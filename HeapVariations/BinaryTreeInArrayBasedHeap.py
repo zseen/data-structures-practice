@@ -1,5 +1,6 @@
 from IHeap import IHeap
 import HeapIsEmptyException
+
 from typing import List
 
 
@@ -24,6 +25,7 @@ class BinaryTreeInArrayBasedHeap(IHeap):
 
         minVal: int = self.heapList[1]
         self.currentSize -= 1
+
         if self.currentSize == 0:
             self.heapList.pop()
         else:
