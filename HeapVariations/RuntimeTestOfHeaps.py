@@ -16,7 +16,7 @@ NUM_TEST_ITERATIONS: int = 10
 NUM_DIGITS_AFTER_DECIMAL_POINT: int = 4
 
 
-def modifyHeap(heap: IHeap, action: str):
+def modifyHeap(heap: IHeap, action: str) -> None:
     if action == "add":
         for repeat in range(ADD_ELEMENTS_REPEAT_NUM):
             heap.add(random.randrange(0, 100000))
@@ -25,7 +25,7 @@ def modifyHeap(heap: IHeap, action: str):
             heap.getAndRemoveSmallest()
 
 
-def benchmarkHeapImplementation(heapImplementation: IHeap):
+def benchmarkHeapImplementation(heapImplementation: IHeap) -> None:
     runTimes: List = []
     for test in range(NUM_TEST_ITERATIONS):
         start: float = time.clock()
@@ -38,7 +38,7 @@ def benchmarkHeapImplementation(heapImplementation: IHeap):
     print(round(sum(runTimes) / NUM_TEST_ITERATIONS, NUM_DIGITS_AFTER_DECIMAL_POINT))
 
 
-def executeQueries(h: IHeap):
+def executeQueries(h: IHeap) -> None:
     with open("TestingActions.txt") as ta:
         for action in ta:
             modifyHeap(h, action.strip())

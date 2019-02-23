@@ -11,15 +11,15 @@ class BinaryTreeInArrayBasedHeap(IHeap):
         for element in initialElements:
             self.add(element)
 
-    def add(self, element: int):
+    def add(self, element: int) -> None:
         self.heapList.append(element)
         self.currentSize += 1
         self._moveElementUp(self.currentSize)
 
-    def isHeapEmpty(self):
+    def isHeapEmpty(self) -> bool:
         return self.currentSize == 0
 
-    def getAndRemoveSmallest(self):
+    def getAndRemoveSmallest(self) -> int:
         if self.isHeapEmpty():
             raise HeapIsEmptyException.HeapIsEmptyException("Heap empty - cannot return data")
 
@@ -34,20 +34,20 @@ class BinaryTreeInArrayBasedHeap(IHeap):
 
         return minVal
 
-    def _moveElementUp(self, currentNodeIndex: int):
+    def _moveElementUp(self, currentNodeIndex: int) -> None:
         parentIndex: int = currentNodeIndex // 2
         if self.heapList[currentNodeIndex] < self.heapList[parentIndex]:
             self.heapList[parentIndex], self.heapList[currentNodeIndex] = self.heapList[currentNodeIndex], self.heapList[parentIndex]
             self._moveElementUp(parentIndex)
 
-    def _moveElementDown(self, currentNodeIndex: int):
+    def _moveElementDown(self, currentNodeIndex: int) -> None:
         if currentNodeIndex * 2 <= self.currentSize:
             minValueChildIndex: int = self._getMinimumValueChildIndex(currentNodeIndex)
             if self.heapList[currentNodeIndex] > self.heapList[minValueChildIndex]:
                 self.heapList[currentNodeIndex], self.heapList[minValueChildIndex] = self.heapList[minValueChildIndex], self.heapList[currentNodeIndex]
                 self._moveElementDown(minValueChildIndex)
 
-    def _getMinimumValueChildIndex(self, currentNodeIndex: int):
+    def _getMinimumValueChildIndex(self, currentNodeIndex: int) -> int:
         leftChildIndex: int = 2 * currentNodeIndex
         rightChildIndex: int = 2 * currentNodeIndex + 1
         if rightChildIndex > self.currentSize or self.heapList[leftChildIndex] < self.heapList[rightChildIndex]:

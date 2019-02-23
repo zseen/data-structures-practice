@@ -8,10 +8,10 @@ class SimpleArrayBasedHeap(IHeap):
         self.heapList: List = sorted(heapList)
         self.isHeapSorted: bool = True
 
-    def isHeapEmpty(self):
+    def isHeapEmpty(self) -> bool:
         return len(self.heapList) == 0
 
-    def getAndRemoveSmallest(self):
+    def getAndRemoveSmallest(self) -> int:
         if self.isHeapEmpty():
             raise HeapIsEmptyException.HeapIsEmptyException("Heap empty")
 
@@ -21,6 +21,6 @@ class SimpleArrayBasedHeap(IHeap):
 
         return self.heapList.pop(0)
 
-    def add(self, element: int):
+    def add(self, element: int) -> None:
         self.heapList.append(element)
         self.isHeapSorted = False
