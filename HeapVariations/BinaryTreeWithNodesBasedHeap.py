@@ -65,6 +65,9 @@ def main():
     h.root = Node(2)
     h.root.left = Node(4)
     h.root.left.parent = h.root
+    h.root.left.left = Node(6)
+    h.root.left.left.parent =  h.root.left
+
     h.root.right = Node(5)
     h.root.right.parent = h.root
 
@@ -80,10 +83,15 @@ def main():
     #h.add(10)
     #h.add(11)
     print("parent:" ,h.findParentOfMissingChild().value)
-    h.add(3)
+    h.add(7)
 
     print("---")
     print("new left child of root:", h.root.left.value)
+
+    print("right child of parent:", h.root.left.right.value)
+    print("parent of most recently added node: ", h.root.left.value)
+
+   
 
 
 
