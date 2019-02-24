@@ -18,7 +18,26 @@ class Heap(IHeap.IHeap):
 
 
     def add(self, element: int):
+        parentNode = self.findParentOfMissingChild()
+        newNode = Node(element)
 
+        if not parentNode.left:
+            parentNode.left = newNode
+        else:
+            parentNode.right = newNode
+
+        newNode.parent = parentNode
+        print("newNodeCurrentParent: ", parentNode.value)
+
+        while newNode.value < parentNode.value:
+            newNode.parent = parentNode.parent
+            parentNode.parent.left = newNode
+            parentNode.parent = newNode
+            newNode.left = parentNode
+            newNode = parentNode
+
+
+        print("newNodeRealParent", newNode.parent.value)
 
     def findParentOfMissingChild(self):
         missingChild = Node(0)
@@ -32,8 +51,6 @@ class Heap(IHeap.IHeap):
             currentNode = nodesToVisit.pop()
             visitedNodes.add(currentNode)
 
-            #print("currentNode: ", currentNode.value)
-
             if currentNode.left and currentNode.right:
                 nodesToVisit.appendleft(currentNode.left)
                 nodesToVisit.appendleft(currentNode.right)
@@ -46,17 +63,28 @@ def main():
     h = Heap()
 
     h.root = Node(2)
-    h.root.left = Node(3)
-    #h.root.left.parent = h.root
-    h.root.right = Node(4)
+    h.root.left = Node(4)
+    h.root.left.parent = h.root
+    h.root.right = Node(5)
+    h.root.right.parent = h.root
 
-    h.root.left.left = Node(5)
+    #h.root.left.left = Node(5)
     #h.root.right.parent = h.root
-    h.root.left.right = Node(6)
+    #h.root.left.right = Node(6)
 
-    h.root.right.left = Node(7)
-    h.root.right.right = Node(8)
-    print(h.findParentOfMissingChild().value)
+    #h.root.right.left = Node(7)
+    #h.root.right.right = Node(8)
+
+
+    #h.add(9)
+    #h.add(10)
+    #h.add(11)
+    print("parent:" ,h.findParentOfMissingChild().value)
+    h.add(3)
+
+    print("---")
+    print("new left child of root:", h.root.left.value)
+
 
 
 
