@@ -28,35 +28,47 @@ class Heap(IHeap.IHeap):
             parentNode.right = newNode
 
         newNode.parent = parentNode
-        #print("newNodeCurrentParent: ", parentNode.value)
 
-        while newNode.value < parentNode.value:
-            newNode.parent = parentNode.parent
-            #print("nnn: ", parentNode.parent.value)
-            if parentNode.parent.right == parentNode:
-                parentNode.parent.right = newNode
+        while newNode.value < newNode.parent.value:
+            initialParent = newNode.parent
+            print("initialParent: ", initialParent.value)
+
+            if newNode.parent is self.root:
+                print("newNodeParent: ", newNode.parent.value)
+                print("newNode: ", newNode.value)
+                oldRootValue = self.root.value
+                print("oldRoot: ", oldRootValue)
+                print("newNode: ", newNode.value)
+                self.root.value = newNode.value
+                self.root.parent = None
+                print("root.left: ", self.root.left.value)
+                print("modifiedRoot: ", self.root.value)
+                print("newNode: ", newNode.value)
+
+                if not self.root.left:
+                    self.root.left.value = oldRootValue
+                    break
+                else:
+                    self.root.right.value = oldRootValue
+                    break
+
+            newNode.left = initialParent
+            newNode.parent = initialParent.parent
+
+            if initialParent.parent.right == initialParent:
+                initialParent.parent.right = newNode
             else:
-                parentNode.parent.left = newNode
-            #print("nnn: ", newNode.parent.value)
-            parentNode.parent = newNode
-            #print("nnn: ", parentNode.parent.value)
-            newNode.left = parentNode
-            #print("nnn: ", newNode.parent.value)
-            #print("nnn: ", parentNode.parent.value)
-            print(parentNode.value)
-            print(parentNode.parent.value)
-            #parentNode = parentNode.parent
-            #print(newNode.parent.value)
-            #newNode = newNode.parent
-            print("newNode.value", newNode.value)
-            print("HOW TO MOVE ON?")
-            break
+                initialParent.parent.left = newNode
 
-            #print(parentNode.parent.value)
-            #print("nnn: ", newNode.parent.value)
+            #print("newnodeParent: ", newNode.parent.value)
+            initialParent.parent = newNode
+            print("newnode: ", newNode.value)
+            print("newnodeParent: ", newNode.parent.value)
 
+            #newNode.parent = newNode.parent
+            print("---")
 
-        #print("newNodeRealParent", newNode.parent.value)
+            #break
 
     def findParentOfMissingChild(self):
         missingChild = Node(0)
@@ -81,7 +93,7 @@ class Heap(IHeap.IHeap):
 def main():
     h = Heap()
 
-    h.root = Node(2)
+    h.root = Node(1)
     h.root.left = Node(4)
     h.root.left.parent = h.root
     h.root.left.left = Node(6)
@@ -89,33 +101,28 @@ def main():
     h.root.left.right = Node(7)
     h.root.left.right.parent = h.root.left
 
-    h.root.right = Node(5)
+    h.root.right = Node(2)
     h.root.right.parent = h.root
+    h.root.right.left = Node(5)
+    h.root.right.left.parent = h.root.right
+    h.root.right.right = Node(8)
+    h.root.right.right.parent = h.root.right
 
 
-
-    #h.root.left.left = Node(5)
-    #h.root.right.parent = h.root
-    #h.root.left.right = Node(6)
-
-    #h.root.right.left = Node(7)
-    #h.root.right.right = Node(8)
+    print("root.right.right: ", h.root.right.right.value)
 
 
-    #h.add(9)
-    #h.add(10)
-    #h.add(11)
-    print("parent:",h.findParentOfMissingChild().value)
-    h.add(1)
+    #print("parent:",h.findParentOfMissingChild().value)
+    h.add(3)
 
     print("root: ", h.root.value)
-    print("right child of root:", h.root.right.value)
+    print("left child of root: ", h.root.left.value)
+    #print("root.left.left: ", h.root.left.left.value)
+    print("right child of root: ", h.root.right.value)
+    print("root.left.left: ", h.root.left.left.value)
+    #print("root.left.right", h.root.left.right.value)
+    print("root.left.left.left: ", h.root.left.left.left.value)
 
-    # print("---")
-    # print("new right child of root:", h.root.right.value)
-
-    #print("right child of parent:", h.root.left.right.value)
-    #print("parent of most recently added node: ", h.root.left.value)
 
 
 class InsertionTester(unittest.TestCase):
@@ -158,6 +165,26 @@ class InsertionTester(unittest.TestCase):
         h.add(3)
 
         self.assertTrue(h.root.right.left.value == 5 and h.root.right.value == 3)
+
+
+    def test_initialThreeLayers_leftHasTwoChildre_rightZero_newNodeSmallerThanRoot_twoSwaps(self):
+        h = Heap()
+
+        h.root = Node(2)
+        h.root.left = Node(4)
+        h.root.left.parent = h.root
+        h.root.left.left = Node(6)
+        h.root.left.left.parent = h.root.left
+        h.root.left.right = Node(7)
+        h.root.left.right.parent = h.root.left
+
+        h.root.right = Node(5)
+        h.root.right.parent = h.root
+        h.add(1)
+
+
+        self.assertTrue(h.root.value == 1 and h.root.right.value == 2 and h.root.left.value == 4)
+
 
 
 if __name__ == '__main__':
