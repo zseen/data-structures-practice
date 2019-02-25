@@ -45,7 +45,9 @@ def executeQueries(h: IHeap) -> None:
 
 
 def main():
-    benchmarkHeapImplementation(SimpleArrayBasedHeap([random.randrange(INITIAL_ELEMENTS_VALUES_RANGE) for _ in range(INITIAL_ELEMENTS_NUM)]))
+    initialElements: List = [random.randrange(INITIAL_ELEMENTS_VALUES_RANGE) for _ in range(INITIAL_ELEMENTS_NUM)]
+    benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))
+    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))
 
 
 if __name__ == '__main__':
