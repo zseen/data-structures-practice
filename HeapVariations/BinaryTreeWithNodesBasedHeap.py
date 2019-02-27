@@ -30,8 +30,9 @@ class Heap(IHeap.IHeap):
         newNode.parent = parentNode
 
         while newNode.value < newNode.parent.value:
-            initialParent = newNode.parent
-            print("initialParent: ", initialParent.value)
+            initialParentValue = newNode.parent.value
+            #print("initialParent: ", initialParent.value)
+            print("newNode: ", newNode.value)
 
             if newNode.parent is self.root:
                 print("newNodeParent: ", newNode.parent.value)
@@ -52,18 +53,48 @@ class Heap(IHeap.IHeap):
                     self.root.right.value = oldRootValue
                     break
 
-            newNode.left = initialParent
-            newNode.parent = initialParent.parent
+            print("initialParentValue: ", initialParentValue)
+            print("newNodeParent: ", newNode.parent.value)
+            newNode.left = newNode.parent
+            #newNode.left.parent = newNode
+            #newNode.left.value = initialParentValue
+            if newNode.parent.right:
+                newNode.right = newNode.parent.right
+                #newNode.right.value = newNode.parent.right.value
+                #newNode.right.parent = newNode
 
-            if initialParent.parent.right == initialParent:
-                initialParent.parent.right = newNode
-            else:
-                initialParent.parent.left = newNode
+                print("newNode.right: ", newNode.right.value)
+
+
+            print("newNode.left: ", newNode.left.value)
+
+            newNode.parent = newNode.parent.parent
+
+            #print("newNodeParent.right: ", newNode.parent.right.value)
+
+            print("newNodeParent: ", newNode.parent.value)
+            #newNode.parent.left.value = newNode.value
+            #print("newnode.parent.right: ", newNode.parent.right.value)
+
 
             #print("newnodeParent: ", newNode.parent.value)
-            initialParent.parent = newNode
+            print("newnodeParent: ", newNode.parent.value)
+            #newNode.parent.parent.value = newNode.value
+
             print("newnode: ", newNode.value)
             print("newnodeParent: ", newNode.parent.value)
+            #print("newnode.parent.right: ", newNode.parent.right.value)
+            print("newnode.left: ", newNode.left.value)
+            #print("newnode.left.left: ", newNode.left.left.value)
+
+            print("root: ", self.root.value)
+            print("root.left: ", self.root.left.value)
+
+            if newNode.right:
+                print("newNode.right: ", newNode.right.value)
+            c = newNode.left.value
+            if newNode.left.left:
+                print("newNode.left.left: ", newNode.left.left.value)
 
             #newNode.parent = newNode.parent
             print("---")
@@ -109,7 +140,7 @@ def main():
     h.root.right.right.parent = h.root.right
 
 
-    print("root.right.right: ", h.root.right.right.value)
+    #print("root.right.right: ", h.root.right.right.value)
 
 
     #print("parent:",h.findParentOfMissingChild().value)
