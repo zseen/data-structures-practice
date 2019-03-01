@@ -17,8 +17,42 @@ class Heap(IHeap.IHeap):
     def __init__(self):
         self.root = None
 
+    def swapNodes(self, childNode: Node, parentNode: Node) -> None:
+        parentNode.left = childNode.left
+
+        if parentNode.left:
+            print("parentNode.left: ", parentNode.left.value)
+
+        childNode.right = parentNode.right
+
+        if childNode.right:
+            print("childNode.right: ", childNode.right.value)
+
+        childNode.left = parentNode
+        print("childNode.left: ", childNode.left.value)
+
+        childNode.parent = parentNode.parent
+        print("childNode.parent: ", childNode.parent.value)
+
+        childNode.parent.left = childNode
+
+        if childNode.parent.parent:
+            print("grandparentNode: ", childNode.parent.parent.value)
+
+        print("rootIterationEnd: ", self.root.value)
+        print("leftChildRoot: ", self.root.left.value)
+
+
+
+        parentNode.right = childNode.right
+        parentNode.parent = childNode
+
 
     def add(self, element: int):
+        newNode = self.getNewNodeInsertedAtInitialPosition(element)
+        self.moveNodeUp(newNode)
+
+    def getNewNodeInsertedAtInitialPosition(self, element: int):
         parentNode = self.findParentOfMissingChild()
         newNode = Node(element)
 
@@ -28,80 +62,29 @@ class Heap(IHeap.IHeap):
             parentNode.right = newNode
 
         newNode.parent = parentNode
-
-        while newNode.value < newNode.parent.value:
-            initialParentValue = newNode.parent.value
-            #print("initialParent: ", initialParent.value)
-            print("newNode: ", newNode.value)
-
-            if newNode.parent is self.root:
-                print("newNodeParent: ", newNode.parent.value)
-                print("newNode: ", newNode.value)
-                oldRootValue = self.root.value
-                print("oldRoot: ", oldRootValue)
-                print("newNode: ", newNode.value)
-                self.root.value = newNode.value
-                self.root.parent = None
-                print("root.left: ", self.root.left.value)
-                print("modifiedRoot: ", self.root.value)
-                print("newNode: ", newNode.value)
-
-                if not self.root.left:
-                    self.root.left.value = oldRootValue
-                    break
-                else:
-                    self.root.right.value = oldRootValue
-                    break
-
-            print("initialParentValue: ", initialParentValue)
-            print("newNodeParent: ", newNode.parent.value)
-            newNode.left = newNode.parent
-            #newNode.left.parent = newNode
-            #newNode.left.value = initialParentValue
-            if newNode.parent.right:
-                newNode.right = newNode.parent.right
-                #newNode.right.value = newNode.parent.right.value
-                #newNode.right.parent = newNode
-
-                print("newNode.right: ", newNode.right.value)
+        return newNode
 
 
-            print("newNode.left: ", newNode.left.value)
+    def moveNodeUp(self, node: Node):
+        while node.value < node.parent.value:
+            print("node: ", node.value)
+            print("initialParent: ", node.parent.value)
 
-            newNode.parent = newNode.parent.parent
+            if node.parent.right:
+                print("parent.right: ", node.parent.right.value)
 
-            #print("newNodeParent.right: ", newNode.parent.right.value)
+            if node.left:
+                print("node.left: ", node.left.value)
+            if node.right:
+                print("node.right: ", node.right.value)
 
-            print("newNodeParent: ", newNode.parent.value)
-            #newNode.parent.left.value = newNode.value
-            #print("newnode.parent.right: ", newNode.parent.right.value)
+            self.swapNodes(node, node.parent)
 
-
-            #print("newnodeParent: ", newNode.parent.value)
-            print("newnodeParent: ", newNode.parent.value)
-            #newNode.parent.parent.value = newNode.value
-
-            print("newnode: ", newNode.value)
-            print("newnodeParent: ", newNode.parent.value)
-            #print("newnode.parent.right: ", newNode.parent.right.value)
-            print("newnode.left: ", newNode.left.value)
-            #print("newnode.left.left: ", newNode.left.left.value)
-
-            print("root: ", self.root.value)
-            print("root.left: ", self.root.left.value)
-
-            if newNode.right:
-                print("newNode.right: ", newNode.right.value)
-            c = newNode.left.value
-            if newNode.left.left:
-                print("newNode.left.left: ", newNode.left.left.value)
-
-            #newNode.parent = newNode.parent
+            print("node: ", node.value)
+            print("node.parent: ", node.parent.value)
             print("---")
 
-            #break
-
-    def findParentOfMissingChild(self):
+    def findParentOfMissingChild(self) -> Node:
         missingChild = Node(0)
         missingChild.parent = None
         nodesToVisit = deque()
@@ -151,7 +134,7 @@ def main():
     #print("root.left.left: ", h.root.left.left.value)
     print("right child of root: ", h.root.right.value)
     print("root.left.left: ", h.root.left.left.value)
-    #print("root.left.right", h.root.left.right.value)
+    print("root.left.right", h.root.left.right.value)
     print("root.left.left.left: ", h.root.left.left.left.value)
 
 
