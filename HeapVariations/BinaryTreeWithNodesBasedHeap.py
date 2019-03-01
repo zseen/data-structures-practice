@@ -26,10 +26,12 @@ class Heap(IHeap.IHeap):
 
         childNode.parent = parentNode.parent
 
-        if childNode.parent.left == childNode:
-            childNode.parent.left = childNode
+        if parentNode.parent.left == parentNode:
+            parentNode.parent.left = childNode
         else:
-            childNode.parent.right = childNode
+            parentNode.parent.right = childNode
+
+
 
         parentNode.right = childNode.right
         parentNode.parent = childNode
@@ -136,10 +138,6 @@ def main():
     h.root = Node(2)
     h.root.left = Node(4)
     h.root.left.parent = h.root
-    h.root.left.left = Node(6)
-    h.root.left.left.parent = h.root.left
-    h.root.left.right = Node(7)
-    h.root.left.right.parent = h.root.left
     h.root.right = Node(5)
     h.root.right.parent = h.root
     h.add(3)
@@ -153,7 +151,7 @@ def main():
     print("root.left.left: ", h.root.left.left.value)
     #print("root.left.right", h.root.left.right.value)
     #print("root.left.left.left: ", h.root.left.left.left.value)
-    print("root.right.left: ", h.root.right.left.value)
+    #print("root.right.left: ", h.root.right.left.value)
     print("root.right: ", h.root.right.value)
 
 
