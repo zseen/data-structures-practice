@@ -17,7 +17,30 @@ class Heap(IHeap.IHeap):
     def __init__(self):
         self.root = None
 
+
     def swapNodes(self, childNode: Node, parentNode: Node) -> None:
+        parentNode.left = childNode.left
+
+        childNode.right = parentNode.right
+        childNode.left = parentNode
+
+        childNode.parent = parentNode.parent
+
+        if childNode.parent.left == childNode:
+            childNode.parent.left = childNode
+        else:
+            childNode.parent.right = childNode
+
+        parentNode.right = childNode.right
+        parentNode.parent = childNode
+
+
+
+
+
+
+
+    def sN(self, childNode: Node, parentNode: Node) -> None:
         parentNode.left = childNode.left
 
         if parentNode.left:
@@ -42,17 +65,15 @@ class Heap(IHeap.IHeap):
         print("rootIterationEnd: ", self.root.value)
         print("leftChildRoot: ", self.root.left.value)
 
-
-
         parentNode.right = childNode.right
         parentNode.parent = childNode
 
 
-    def add(self, element: int):
+    def add(self, element: int) -> None:
         newNode = self.getNewNodeInsertedAtInitialPosition(element)
         self.moveNodeUp(newNode)
 
-    def getNewNodeInsertedAtInitialPosition(self, element: int):
+    def getNewNodeInsertedAtInitialPosition(self, element: int) -> Node:
         parentNode = self.findParentOfMissingChild()
         newNode = Node(element)
 
@@ -82,6 +103,12 @@ class Heap(IHeap.IHeap):
 
             print("node: ", node.value)
             print("node.parent: ", node.parent.value)
+
+            if node.left:
+                print("node.left: ", node.left.value)
+
+            if node.right:
+                print("node.right: ", node.right.value)
             print("---")
 
     def findParentOfMissingChild(self) -> Node:
@@ -106,36 +133,28 @@ class Heap(IHeap.IHeap):
 
 def main():
     h = Heap()
-
-    h.root = Node(1)
+    h.root = Node(2)
     h.root.left = Node(4)
     h.root.left.parent = h.root
     h.root.left.left = Node(6)
     h.root.left.left.parent = h.root.left
     h.root.left.right = Node(7)
     h.root.left.right.parent = h.root.left
-
-    h.root.right = Node(2)
+    h.root.right = Node(5)
     h.root.right.parent = h.root
-    h.root.right.left = Node(5)
-    h.root.right.left.parent = h.root.right
-    h.root.right.right = Node(8)
-    h.root.right.right.parent = h.root.right
-
-
-    #print("root.right.right: ", h.root.right.right.value)
-
-
-    #print("parent:",h.findParentOfMissingChild().value)
     h.add(3)
 
+
+
     print("root: ", h.root.value)
-    print("left child of root: ", h.root.left.value)
+    print("root.left: ", h.root.left.value)
     #print("root.left.left: ", h.root.left.left.value)
-    print("right child of root: ", h.root.right.value)
+    print("root.right: ", h.root.right.value)
     print("root.left.left: ", h.root.left.left.value)
-    print("root.left.right", h.root.left.right.value)
-    print("root.left.left.left: ", h.root.left.left.left.value)
+    #print("root.left.right", h.root.left.right.value)
+    #print("root.left.left.left: ", h.root.left.left.left.value)
+    print("root.right.left: ", h.root.right.left.value)
+    print("root.right: ", h.root.right.value)
 
 
 
@@ -181,10 +200,25 @@ class InsertionTester(unittest.TestCase):
         self.assertTrue(h.root.right.left.value == 5 and h.root.right.value == 3)
 
 
-    def test_initialThreeLayers_leftHasTwoChildre_rightZero_newNodeSmallerThanRoot_twoSwaps(self):
-        h = Heap()
+    # def test_initialThreeLayers_leftHasTwoChildren_rightZero_newNodeSmallerThanRoot_twoSwaps(self):
+    #     h = Heap()
+    #     h.root = Node(2)
+    #     h.root.left = Node(4)
+    #     h.root.left.parent = h.root
+    #     h.root.left.left = Node(6)
+    #     h.root.left.left.parent = h.root.left
+    #     h.root.left.right = Node(7)
+    #     h.root.left.right.parent = h.root.left
+    #
+    #     h.root.right = Node(5)
+    #     h.root.right.parent = h.root
+    #     h.add(1)
+    #
+    #     self.assertTrue(h.root.value == 1 and h.root.right.value == 2 and h.root.left.value == 4)
 
-        h.root = Node(2)
+    def test_initialThreeLayers_LeftAndRightTwoChildren_newNodeRootLeftChild_twoSwaps(self):
+        h = Heap()
+        h.root = Node(1)
         h.root.left = Node(4)
         h.root.left.parent = h.root
         h.root.left.left = Node(6)
@@ -192,15 +226,21 @@ class InsertionTester(unittest.TestCase):
         h.root.left.right = Node(7)
         h.root.left.right.parent = h.root.left
 
-        h.root.right = Node(5)
+        h.root.right = Node(2)
         h.root.right.parent = h.root
-        h.add(1)
+        h.root.right.left = Node(5)
+        h.root.right.left.parent = h.root.right
+        h.root.right.right = Node(8)
+        h.root.right.right.parent = h.root.right
+        h.add(3)
+
+        self.assertTrue(h.root.left.value == 3 and h.root.left.right.value == 7 and h.root.left.left.left.value == 6)
 
 
-        self.assertTrue(h.root.value == 1 and h.root.right.value == 2 and h.root.left.value == 4)
+
 
 
 
 if __name__ == '__main__':
-    main()
-    #unittest.main()
+    #main()
+    unittest.main()
