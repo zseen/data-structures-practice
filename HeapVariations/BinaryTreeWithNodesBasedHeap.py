@@ -126,46 +126,37 @@ class Heap(IHeap.IHeap):
                 print("root.left: ", self.root.left.value)
                 print("root.left.left: ", self.root.left.left.value)
 
-                formerLeft = node.left
-                print("formerLeft: ", node.left.value)
-                formerRight = node.right
-
+                initialLeftChildOfNode = node.left
+                print("initialLeftChildOfNode: ", node.left.value)
+                initialRightChildOfNode = node.right
 
                 if self.root.right == node:
                     node.right = oldRoot
-                    turn = "right"
+                    node.left = oldRoot.left
+
                 else:
+                    node.right = oldRoot.right
                     node.left = oldRoot
-                    turn = "left"
 
 
                 self.root = node
 
-                if turn == "left":
-                    self.root.left = oldRoot
-                    self.root.right = oldRoot.right
-                else:
-                    self.root.left = oldRoot.left
-                    self.root.right = oldRoot
-
 
                 print("root.left: ", self.root.left.value)
-                oldRoot.left = formerLeft
-                formerLeft.parent = oldRoot
-                oldRoot.right = formerRight
-                if formerRight:
-                    formerRight.parent = oldRoot
+                oldRoot.left = initialLeftChildOfNode
+                initialLeftChildOfNode.parent = oldRoot
+                oldRoot.right = initialRightChildOfNode
+
+                if initialRightChildOfNode:
+                    initialRightChildOfNode.parent = oldRoot
+                    
                 oldRoot.parent = node
                 self.root.parent = None
                 print("root.left: ", self.root.left.value)
                 print("root.right: ", self.root.right.value)
 
 
-
                 break
-
-
-
 
             print("node: ", node.value)
             #print("node.parent: ", node.parent.value)
@@ -330,5 +321,5 @@ class InsertionTester(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    main()
-    #unittest.main()
+    #main()
+    unittest.main()
