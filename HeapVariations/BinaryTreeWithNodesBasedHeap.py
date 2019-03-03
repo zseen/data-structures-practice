@@ -20,7 +20,6 @@ class Heap(IHeap.IHeap):
 
     def swapNodes(self, childNode: Node, parentNode: Node) -> None:
         parentNode.left = childNode.left
-
         childNode.right = parentNode.right
         childNode.left = parentNode
 
@@ -30,8 +29,6 @@ class Heap(IHeap.IHeap):
             parentNode.parent.left = childNode
         else:
             parentNode.parent.right = childNode
-
-
 
         parentNode.right = childNode.right
         parentNode.parent = childNode
@@ -103,8 +100,75 @@ class Heap(IHeap.IHeap):
 
             self.swapNodes(node, node.parent)
 
+            print("---")
+            print("currNode: ", node.value)
+            print("currPar: ", node.parent.value)
+
+            # parentNode.left = childNode.left
+            # childNode.right = parentNode.right
+            # childNode.left = parentNode
+            #
+            # childNode.parent = parentNode.parent
+            #
+            # if parentNode.parent.left == parentNode:
+            #     parentNode.parent.left = childNode
+            # else:
+            #     parentNode.parent.right = childNode
+            #
+            # parentNode.right = childNode.right
+            # parentNode.parent = childNode
+
+
+            if node.parent is self.root and node.value < self.root.value:
+                oldRoot = self.root
+                print("oldRoot: ", oldRoot.value)
+                print("root.right: ", self.root.right.value)
+                print("root.left: ", self.root.left.value)
+                print("root.left.left: ", self.root.left.left.value)
+
+                formerLeft = node.left
+                print("formerLeft: ", node.left.value)
+                formerRight = node.right
+
+
+                if self.root.right == node:
+                    node.right = oldRoot
+                    turn = "right"
+                else:
+                    node.left = oldRoot
+                    turn = "left"
+
+
+                self.root = node
+
+                if turn == "left":
+                    self.root.left = oldRoot
+                    self.root.right = oldRoot.right
+                else:
+                    self.root.left = oldRoot.left
+                    self.root.right = oldRoot
+
+
+                print("root.left: ", self.root.left.value)
+                oldRoot.left = formerLeft
+                formerLeft.parent = oldRoot
+                oldRoot.right = formerRight
+                if formerRight:
+                    formerRight.parent = oldRoot
+                oldRoot.parent = node
+                self.root.parent = None
+                print("root.left: ", self.root.left.value)
+                print("root.right: ", self.root.right.value)
+
+
+
+                break
+
+
+
+
             print("node: ", node.value)
-            print("node.parent: ", node.parent.value)
+            #print("node.parent: ", node.parent.value)
 
             if node.left:
                 print("node.left: ", node.left.value)
@@ -135,13 +199,26 @@ class Heap(IHeap.IHeap):
 
 def main():
     h = Heap()
+    # h.root = Node(2)
+    # h.root.left = Node(4)
+    # h.root.left.parent = h.root
+    # h.root.left.left = Node(6)
+    # h.root.left.left.parent = h.root.left
+    # h.root.left.right = Node(7)
+    # h.root.left.right.parent = h.root.left
+    #
+    # h.root.right = Node(5)
+    # h.root.right.parent = h.root
+    # h.add(1)
+    # h.add(8)
+
     h.root = Node(2)
     h.root.left = Node(4)
     h.root.left.parent = h.root
+
     h.root.right = Node(5)
     h.root.right.parent = h.root
-    h.add(3)
-
+    h.add(1)
 
 
     print("root: ", h.root.value)
@@ -152,6 +229,7 @@ def main():
     #print("root.left.right", h.root.left.right.value)
     #print("root.left.left.left: ", h.root.left.left.left.value)
     #print("root.right.left: ", h.root.right.left.value)
+    #print("root.right.right: ", h.root.right.right.value)
     print("root.right: ", h.root.right.value)
 
 
@@ -198,21 +276,21 @@ class InsertionTester(unittest.TestCase):
         self.assertTrue(h.root.right.left.value == 5 and h.root.right.value == 3)
 
 
-    # def test_initialThreeLayers_leftHasTwoChildren_rightZero_newNodeSmallerThanRoot_twoSwaps(self):
-    #     h = Heap()
-    #     h.root = Node(2)
-    #     h.root.left = Node(4)
-    #     h.root.left.parent = h.root
-    #     h.root.left.left = Node(6)
-    #     h.root.left.left.parent = h.root.left
-    #     h.root.left.right = Node(7)
-    #     h.root.left.right.parent = h.root.left
-    #
-    #     h.root.right = Node(5)
-    #     h.root.right.parent = h.root
-    #     h.add(1)
-    #
-    #     self.assertTrue(h.root.value == 1 and h.root.right.value == 2 and h.root.left.value == 4)
+    def test_initialThreeLayers_leftHasTwoChildren_rightZero_newNodeSmallerThanRoot_twoSwaps(self):
+        h = Heap()
+        h.root = Node(2)
+        h.root.left = Node(4)
+        h.root.left.parent = h.root
+        h.root.left.left = Node(6)
+        h.root.left.left.parent = h.root.left
+        h.root.left.right = Node(7)
+        h.root.left.right.parent = h.root.left
+
+        h.root.right = Node(5)
+        h.root.right.parent = h.root
+        h.add(1)
+
+        self.assertTrue(h.root.value == 1 and h.root.right.value == 2 and h.root.left.value == 4)
 
     def test_initialThreeLayers_LeftAndRightTwoChildren_newNodeRootLeftChild_twoSwaps(self):
         h = Heap()
@@ -234,11 +312,23 @@ class InsertionTester(unittest.TestCase):
 
         self.assertTrue(h.root.left.value == 3 and h.root.left.right.value == 7 and h.root.left.left.left.value == 6)
 
+    def test_initialTwoLayers_insertedAsChildLeftChild_newNodeSmallerThanRoot_twoSwaps(self):
+        h = Heap()
+        h.root = Node(2)
+        h.root.left = Node(4)
+        h.root.left.parent = h.root
+        h.root.right = Node(5)
+        h.root.right.parent = h.root
+        h.add(1)
+
+        self.assertTrue(h.root.value == 1 and h.root.left.value == 2 and h.root.right.value == 5 and h.root.left.left.value == 4)
+
+
 
 
 
 
 
 if __name__ == '__main__':
-    #main()
-    unittest.main()
+    main()
+    #unittest.main()
