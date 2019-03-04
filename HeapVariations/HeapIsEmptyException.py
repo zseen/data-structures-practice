@@ -1,0 +1,2 @@
+class HeapIsEmptyException(IndexError):
+    pass
