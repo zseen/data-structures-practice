@@ -39,7 +39,6 @@ class Heap(IHeap):
     def insertNodeAtInitialPosition(self, newNode: Node) -> None:
         parentNode: Node = self.findParentOfFirstMissingChild()
 
-
         if not parentNode.left:
             parentNode.left = newNode
         else:
@@ -47,58 +46,87 @@ class Heap(IHeap):
 
         newNode.parent = parentNode
 
-
     def moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
-            if node.parent is self.root:
-                self.swapNodeWithRoot(node)
-                break
-
             self.swapNodes(node, node.parent)
 
     def swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        parentNode.left = childNode.left
-        childNode.right = parentNode.right
-        childNode.left = parentNode
-        childNode.parent = parentNode.parent
+        initialRightChildOfChildNode: Node = childNode.right
+        initialLeftChildOfChildNode: Node = childNode.left
 
-        if parentNode.parent.left == parentNode:
-            parentNode.parent.left = childNode
+        if parentNode.left is childNode:
+            childNode.right = parentNode.right
+            parentNode.left = initialLeftChildOfChildNode
+            childNode.left = parentNode
+            parentNode.right = initialRightChildOfChildNode
         else:
-            parentNode.parent.right = childNode
+            parentNode.right = initialRightChildOfChildNode
+            childNode.right = parentNode
+            childNode.left = parentNode.left
+            parentNode.left = initialLeftChildOfChildNode
 
-        parentNode.right = childNode.right
+        if parentNode.parent:
+            childNode.parent = parentNode.parent
+            if parentNode.parent.left is parentNode:
+                parentNode.parent.left = childNode
+            else:
+                parentNode.parent.right = childNode
+        else:
+            self.root = childNode
+            self.root.parent = None
+
         parentNode.parent = childNode
-
-    def swapNodeWithRoot(self, node: Node) -> None:
-        initialRoot: Node = self.root
-        initialLeftChildOfNode: Node = node.left
-        initialRightChildOfNode: Node = node.right
-
-        if self.root.right == node:
-            node.right = initialRoot
-            node.left = initialRoot.left
-        else:
-            node.right = initialRoot.right
-            node.left = initialRoot
-
-        self.root = node
-        self.root.parent = None
-        initialRoot.parent = self.root
-
-        if initialLeftChildOfNode:
-            initialRoot.left = initialLeftChildOfNode
-            initialLeftChildOfNode.parent = initialRoot
-
-        if initialRightChildOfNode:
-            initialRoot.right = initialRightChildOfNode
-            initialRightChildOfNode.parent = initialRoot
 
 
 def main():
     h = Heap()
     h.root = Node(2)
-    h.add(1)
+    h.root.left = Node(4)
+    h.root.left.parent = h.root
+    h.root.left.left = Node(6)
+    h.root.left.left.parent = h.root.left
+    h.root.left.right = Node(7)
+    h.root.left.right.parent = h.root.left
+
+    h.root.left.right.left = Node(14)
+    h.root.left.right.left.parent = h.root.left.right
+    h.root.left.right.right = Node(15)
+    h.root.left.right.right.parent = h.root.left.right
+
+    h.root.left.left.left = Node(9)
+    h.root.left.left.left.parent = h.root.left.left
+    h.root.left.left.right = Node(10)
+    h.root.left.left.right.parent = h.root.left.left
+
+    h.root.right = Node(5)
+    h.root.right.parent = h.root
+    h.root.right.left = Node(8)
+    h.root.right.left.parent = h.root.right
+    h.root.right.left.right = Node(13)
+    h.root.right.left.right.parent = h.root.right.left
+    h.root.right.left.left = Node(13)
+    h.root.right.left.left.parent = h.root.right.left
+
+    h.root.right.right = Node(11)
+    h.root.right.right.parent = h.root.right
+
+    h.root.right.right.left = Node(16)
+    h.root.right.right.left.parent = h.root.right.right
+
+    h.add(3)
+
+    print("root: ", h.root.value)
+    print("root.left: ", h.root.left.value)
+    print("root.right: ", h.root.right.value)
+    print("root.right.right: ", h.root.right.right.value)
+    print("root.right.left: ", h.root.right.left.value)
+    print("root.right.left.right: ", h.root.right.left.right.value)
+    print("root.right.right.right: ", h.root.right.right.right.value)
+    print("root.right.right.left: ", h.root.right.right.left.value)
+    print("root.right.left.right: ", h.root.right.left.right.value)
+    print("root.left.left: ", h.root.left.left.value)
+    print("root.left.right: ", h.root.left.right.value)
+    print("root.left.left.left: ", h.root.left.left.left.value)
 
 
 class InsertionTester(unittest.TestCase):
@@ -208,6 +236,63 @@ class InsertionTester(unittest.TestCase):
 
         self.assertTrue(h.root.value == 1 and h.root.left.value == 2 and h.root.right.value == 5 and h.root.left.left.value == 4)
 
+    def test_initialThreeLayers_insertAsRightChildOfRightChild_oneSwap(self):
+        h = Heap()
+        h.root = Node(2)
+        h.root.left = Node(4)
+        h.root.left.parent = h.root
+        h.root.left.left = Node(6)
+        h.root.left.left.parent = h.root.left
+        h.root.left.right = Node(7)
+        h.root.left.right.parent = h.root.left
+
+        h.root.right = Node(5)
+        h.root.right.parent = h.root
+        h.root.right.left = Node(8)
+        h.root.right.left.parent = h.root.right
+        h.add(3)
+
+        self.assertTrue(h.root.right.value == 3 and h.root.right.right.value == 5 and h.root.right.left.value == 8)
+
+    def test_initialFourLayers_leftBranchFull_insertAtRightRightRight_twoSwaps(self):
+        h = Heap()
+        h.root = Node(2)
+        h.root.left = Node(4)
+        h.root.left.parent = h.root
+        h.root.left.left = Node(6)
+        h.root.left.left.parent = h.root.left
+        h.root.left.right = Node(7)
+        h.root.left.right.parent = h.root.left
+
+        h.root.left.right.left = Node(14)
+        h.root.left.right.left.parent = h.root.left.right
+        h.root.left.right.right = Node(15)
+        h.root.left.right.right.parent = h.root.left.right
+
+        h.root.left.left.left = Node(9)
+        h.root.left.left.left.parent = h.root.left.left
+        h.root.left.left.right = Node(10)
+        h.root.left.left.right.parent = h.root.left.left
+
+        h.root.right = Node(5)
+        h.root.right.parent = h.root
+        h.root.right.left = Node(8)
+        h.root.right.left.parent = h.root.right
+        h.root.right.left.right = Node(13)
+        h.root.right.left.right.parent = h.root.right.left
+        h.root.right.left.left = Node(13)
+        h.root.right.left.left.parent = h.root.right.left
+
+        h.root.right.right = Node(11)
+        h.root.right.right.parent = h.root.right
+
+        h.root.right.right.left = Node(16)
+        h.root.right.right.left.parent = h.root.right.right
+        h.add(3)
+
+        self.assertTrue(h.root.value == 2 and h.root.right.value == 3 and h.root.right.right.value == 5
+                        and h.root.right.right.right.value == 11 and h.root.right.right.left.value == 16 and h.root.right.left.value == 8)
+
 if __name__ == '__main__':
-    #main()
-    unittest.main()
+    main()
+    #unittest.main()
