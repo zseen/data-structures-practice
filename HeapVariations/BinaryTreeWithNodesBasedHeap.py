@@ -1,5 +1,6 @@
 from IHeap import IHeap
-from queue import deque
+
+import queue
 import unittest
 
 
@@ -16,11 +17,12 @@ class Heap(IHeap):
         self.root = None
 
     def add(self, element: int) -> None:
-        newNode = self.getNewNodeInsertedAtInitialPosition(element)
+        newNode = Node(element)
+        self.insertNodeAtInitialPosition(newNode)
         self.moveNodeUp(newNode)
 
     def findParentOfFirstMissingChild(self) -> Node:
-        nodesToVisit: deque = deque()
+        nodesToVisit: queue.deque = queue.deque()
         nodesToVisit.appendleft(self.root)
         visitedNodes: set = set()
 
@@ -32,12 +34,11 @@ class Heap(IHeap):
                 nodesToVisit.appendleft(currentNode.left)
                 nodesToVisit.appendleft(currentNode.right)
             else:
-                parent: Node = currentNode
-                return parent
+                return currentNode
 
-    def getNewNodeInsertedAtInitialPosition(self, element: int) -> Node:
+    def insertNodeAtInitialPosition(self, newNode: Node) -> None:
         parentNode: Node = self.findParentOfFirstMissingChild()
-        newNode: Node = Node(element)
+
 
         if not parentNode.left:
             parentNode.left = newNode
@@ -45,10 +46,10 @@ class Heap(IHeap):
             parentNode.right = newNode
 
         newNode.parent = parentNode
-        return newNode
+
 
     def moveNodeUp(self, node: Node) -> None:
-        while node.value < node.parent.value:
+        while node.parent and node.value < node.parent.value:
             if node.parent is self.root:
                 self.swapNodeWithRoot(node)
                 break
