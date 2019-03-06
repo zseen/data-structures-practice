@@ -61,9 +61,10 @@ class Heap(IHeap):
             parentNode.left = childNode.left
             childNode.left = parentNode
         else:
+            childNode.left, parentNode.left = parentNode.left, childNode.left
             parentNode.right = childNode.right
             childNode.right = parentNode
-            childNode.left, parentNode.left = parentNode.left, childNode.left
+
 
     def _findParentOfFirstMissingChild(self) -> Node:
         nodesToVisit: queue.deque = queue.deque()
