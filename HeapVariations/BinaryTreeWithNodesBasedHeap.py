@@ -24,7 +24,7 @@ class Heap(IHeap):
         if not self.root:
             self.root = newNode
         else:
-            parentNode: Node = self.findParentOfFirstMissingChild()
+            parentNode: Node = self._findParentOfFirstMissingChild()
 
             if not parentNode.left:
                 parentNode.left = newNode
@@ -33,15 +33,30 @@ class Heap(IHeap):
 
             newNode.parent = parentNode
 
+    def _findParentOfFirstMissingChild(self) -> Node:
+        nodesToVisit: queue.deque = queue.deque()
+        nodesToVisit.appendleft(self.root)
+        visitedNodes: set = set()
+
+        while nodesToVisit:
+            currentNode = nodesToVisit.pop()
+            visitedNodes.add(currentNode)
+
+            if currentNode.left and currentNode.right:
+                nodesToVisit.appendleft(currentNode.left)
+                nodesToVisit.appendleft(currentNode.right)
+            else:
+                return currentNode
+
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
             self._swapNodes(node, node.parent)
 
     def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        self._setChildren(childNode, parentNode)
-        self._setParent(childNode, parentNode)
+        self._swapChildren(childNode, parentNode)
+        self._swapParent(childNode, parentNode)
 
-    def _setParent(self, childNode: Node, parentNode: Node) -> None:
+    def _swapParent(self, childNode: Node, parentNode: Node) -> None:
         if parentNode is self.root:
             self.root = childNode
             self.root.parent = None
@@ -55,7 +70,7 @@ class Heap(IHeap):
         parentNode.parent = childNode
 
     @staticmethod
-    def _setChildren(childNode: Node, parentNode: Node) -> None:
+    def _swapChildren(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
             childNode.right, parentNode.right = parentNode.right, childNode.right
             if parentNode.right:
@@ -79,20 +94,6 @@ class Heap(IHeap):
                 parentNode.right.parent = parentNode
             childNode.right = parentNode
 
-    def findParentOfFirstMissingChild(self) -> Node:
-        nodesToVisit: queue.deque = queue.deque()
-        nodesToVisit.appendleft(self.root)
-        visitedNodes: set = set()
-
-        while nodesToVisit:
-            currentNode = nodesToVisit.pop()
-            visitedNodes.add(currentNode)
-
-            if currentNode.left and currentNode.right:
-                nodesToVisit.appendleft(currentNode.left)
-                nodesToVisit.appendleft(currentNode.right)
-            else:
-                return currentNode
 
     def findLastChild(self):
         nodesToVisit: queue.deque = queue.deque()
@@ -184,12 +185,6 @@ class Heap(IHeap):
                     self._swapNodes(node.right, node)
                 else:
                     self._swapNodes(node.left, node)
-
-
-
-
-
-
 
 
             #if node.right:
