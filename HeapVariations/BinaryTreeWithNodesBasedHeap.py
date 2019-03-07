@@ -24,7 +24,7 @@ class Heap(IHeap):
         if not self.root:
             self.root = newNode
         else:
-            parentNode: Node = self._findParentOfFirstMissingChild()
+            parentNode: Node = self.findParentOfFirstMissingChild()
 
             if not parentNode.left:
                 parentNode.left = newNode
@@ -33,30 +33,15 @@ class Heap(IHeap):
 
             newNode.parent = parentNode
 
-    def _findParentOfFirstMissingChild(self) -> Node:
-        nodesToVisit: queue.deque = queue.deque()
-        nodesToVisit.appendleft(self.root)
-        visitedNodes: set = set()
-
-        while nodesToVisit:
-            currentNode = nodesToVisit.pop()
-            visitedNodes.add(currentNode)
-
-            if currentNode.left and currentNode.right:
-                nodesToVisit.appendleft(currentNode.left)
-                nodesToVisit.appendleft(currentNode.right)
-            else:
-                return currentNode
-
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
             self._swapNodes(node, node.parent)
 
     def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        self._swapChildren(childNode, parentNode)
-        self._swapParent(childNode, parentNode)
+        self._setChildren(childNode, parentNode)
+        self._setParent(childNode, parentNode)
 
-    def _swapParent(self, childNode: Node, parentNode: Node) -> None:
+    def _setParent(self, childNode: Node, parentNode: Node) -> None:
         if parentNode is self.root:
             self.root = childNode
             self.root.parent = None
@@ -70,7 +55,7 @@ class Heap(IHeap):
         parentNode.parent = childNode
 
     @staticmethod
-    def _swapChildren(childNode: Node, parentNode: Node) -> None:
+    def _setChildren(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
             childNode.right, parentNode.right = parentNode.right, childNode.right
             if parentNode.right:
@@ -94,17 +79,146 @@ class Heap(IHeap):
                 parentNode.right.parent = parentNode
             childNode.right = parentNode
 
+    def findParentOfFirstMissingChild(self) -> Node:
+        nodesToVisit: queue.deque = queue.deque()
+        nodesToVisit.appendleft(self.root)
+        visitedNodes: set = set()
+
+        while nodesToVisit:
+            currentNode = nodesToVisit.pop()
+            visitedNodes.add(currentNode)
+
+            if currentNode.left and currentNode.right:
+                nodesToVisit.appendleft(currentNode.left)
+                nodesToVisit.appendleft(currentNode.right)
+            else:
+                return currentNode
+
+    def findLastChild(self):
+        nodesToVisit: queue.deque = queue.deque()
+        nodesToVisit.appendleft(self.root)
+        visitedNodes: set = set()
+        currentNode = None
+
+        while nodesToVisit:
+            currentNode = nodesToVisit.pop()
+            visitedNodes.add(currentNode)
+
+            if currentNode.left and currentNode.right:
+                nodesToVisit.appendleft(currentNode.left)
+                nodesToVisit.appendleft(currentNode.right)
+            else:
+                if currentNode.left:
+                    return currentNode.left
+
+        return currentNode
+
+
+    def getAndRemoveSmallest(self):
+        lastChildInTree: Node = self.findLastChild()
+        # print("---")
+        print("lastchild: ",lastChildInTree.value)
+        # print("lastchild.parent: ", lastChildInTree.parent.value)
+        print("root: ", self.root.value)
+
+        if self.root.right:
+            print("root.right: ", self.root.right.value)
+            if self.root.right.right:
+                print("root.right.right: ", self.root.right.right.value)
+            if self.root.right.left:
+                print("root.right.left: ", self.root.right.left.value)
+
+        if self.root.left:
+            print("root.left: ", self.root.left.value)
+            if self.root.left.left:
+                print("root.left.left: ", self.root.left.left.value)
+            if self.root.left.right:
+                print("root.left.right: ", self.root.left.right.value)
+
+
+
+        # print("root.left: ", self.root.left.value)
+
+        if lastChildInTree.parent.right is lastChildInTree:
+            lastChildInTree.parent.right = None
+        else:
+            lastChildInTree.parent.left = None
+
+        oldRoot = self.root
+        self.root = lastChildInTree
+        self.root.parent = None
+
+        lastChildInTree.right = oldRoot.right
+        if lastChildInTree.right:
+            lastChildInTree.right.parent = lastChildInTree
+
+        lastChildInTree.left = oldRoot.left
+        if lastChildInTree.left:
+            lastChildInTree.left.parent = lastChildInTree
+
+        print("smallest: ", oldRoot.value)
+
+
+        self.moveNodeDown(lastChildInTree)
+
+        print("root: ", self.root.value)
+        if self.root.right:
+            print("root.right: ", self.root.right.value)
+            if self.root.right.right:
+                print("root.right.right: ", self.root.right.right.value)
+        if self.root.left:
+            print("root.left: ", self.root.left.value)
+            if self.root.left.left:
+                print("root.left.left: ", self.root.left.left.value)
+            if self.root.left.right:
+                print("root.left.right: ", self.root.left.right.value)
+
+        print("---")
+
+    def moveNodeDown(self, node: Node):
+        while (node.left or node.right):
+            if node.left and (node.value > node.left.value or node.value > node.right.value):
+                print("HOW TO MAKE IT WORK THAT IT COMPARES LEFT AND RIGHT?")
+
+                if node.right and node.left.value > node.right.value:
+                    self._swapNodes(node.right, node)
+                else:
+                    self._swapNodes(node.left, node)
+
+
+
+
+
+
+
+
+            #if node.right:
+            #self._swapNodes(node.right, node)
+
+
+
 
 def main():
     h = Heap()
     h.add(2)
     h.add(4)
-    h.add(9)
     h.add(5)
-    h.add(7)
-    h.add(8)
     h.add(6)
+    h.add(7)
+
+    h.add(8)
+    h.add(9)
     h.add(10)
+
+    h.getAndRemoveSmallest()
+
+
+    h.getAndRemoveSmallest()
+    h.getAndRemoveSmallest()
+
+    #h.getAndRemoveSmallest()
+    #h.getAndRemoveSmallest()
+
 
 
 if __name__ == '__main__':
