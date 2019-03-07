@@ -33,39 +33,6 @@ class Heap(IHeap):
 
             newNode.parent = parentNode
 
-    def _moveNodeUp(self, node: Node) -> None:
-        while node.parent and node.value < node.parent.value:
-            self._swapNodes(node, node.parent)
-
-    def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        self._setChildren(childNode, parentNode)
-        self._setParent(childNode, parentNode)
-
-    def _setParent(self, childNode: Node, parentNode: Node) -> None:
-        if parentNode is self.root:
-            self.root = childNode
-            self.root.parent = None
-        else:
-            childNode.parent = parentNode.parent
-            if parentNode.parent.left is parentNode:
-                parentNode.parent.left = childNode
-            else:
-                parentNode.parent.right = childNode
-
-        parentNode.parent = childNode
-
-    @staticmethod
-    def _setChildren(childNode: Node, parentNode: Node) -> None:
-        if parentNode.left is childNode:
-            childNode.right, parentNode.right = parentNode.right, childNode.right
-            parentNode.left = childNode.left
-            childNode.left = parentNode
-        else:
-            childNode.left, parentNode.left = parentNode.left, childNode.left
-            parentNode.right = childNode.right
-            childNode.right = parentNode
-
-
     def _findParentOfFirstMissingChild(self) -> Node:
         nodesToVisit: queue.deque = queue.deque()
         nodesToVisit.appendleft(self.root)
@@ -80,6 +47,38 @@ class Heap(IHeap):
                 nodesToVisit.appendleft(currentNode.right)
             else:
                 return currentNode
+
+    def _moveNodeUp(self, node: Node) -> None:
+        while node.parent and node.value < node.parent.value:
+            self._swapNodes(node, node.parent)
+
+    def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
+        self._swapChildren(childNode, parentNode)
+        self._swapParent(childNode, parentNode)
+
+    def _swapParent(self, childNode: Node, parentNode: Node) -> None:
+        if parentNode is self.root:
+            self.root = childNode
+            self.root.parent = None
+        else:
+            childNode.parent = parentNode.parent
+            if parentNode.parent.left is parentNode:
+                parentNode.parent.left = childNode
+            else:
+                parentNode.parent.right = childNode
+
+        parentNode.parent = childNode
+
+    @staticmethod
+    def _swapChildren(childNode: Node, parentNode: Node) -> None:
+        if parentNode.left is childNode:
+            childNode.right, parentNode.right = parentNode.right, childNode.right
+            parentNode.left = childNode.left
+            childNode.left = parentNode
+        else:
+            childNode.left, parentNode.left = parentNode.left, childNode.left
+            parentNode.right = childNode.right
+            childNode.right = parentNode
 
 
 def main():
