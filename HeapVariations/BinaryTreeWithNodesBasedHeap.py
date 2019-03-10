@@ -1,4 +1,5 @@
 from IHeap import IHeap
+from HeapIsEmptyException import HeapIsEmptyException
 
 import queue
 
@@ -110,85 +111,99 @@ class Heap(IHeap):
                 nodesToVisit.appendleft(currentNode.right)
             else:
                 if currentNode.left:
+                    #print("lastChild: ", currentNode.left.value)
                     return currentNode.left
 
+
+        #print("lastChild: ", currentNode.value)
         return currentNode
 
 
     def getAndRemoveSmallest(self):
-        lastChildInTree: Node = self.findLastChild()
-        # print("---")
-        print("lastchild: ",lastChildInTree.value)
-        # print("lastchild.parent: ", lastChildInTree.parent.value)
-        print("root: ", self.root.value)
+        if self.isHeapEmpty():
+            raise HeapIsEmptyException("Heap empty - cannot return data")
 
-        if self.root.right:
-            print("root.right: ", self.root.right.value)
-            if self.root.right.right:
-                print("root.right.right: ", self.root.right.right.value)
-            if self.root.right.left:
-                print("root.right.left: ", self.root.right.left.value)
-
-        if self.root.left:
-            print("root.left: ", self.root.left.value)
-            if self.root.left.left:
-                print("root.left.left: ", self.root.left.left.value)
-            if self.root.left.right:
-                print("root.left.right: ", self.root.left.right.value)
-
-
-
-        # print("root.left: ", self.root.left.value)
-
-        if lastChildInTree.parent.right is lastChildInTree:
-            lastChildInTree.parent.right = None
+        if not self.root.right and not self.root.left:
+            print("smallest: ", self.root.value)
+            self.root = None
         else:
-            lastChildInTree.parent.left = None
+            lastChildInTree: Node = self.findLastChild()
 
-        oldRoot = self.root
-        self.root = lastChildInTree
-        self.root.parent = None
+            if lastChildInTree.parent.right is lastChildInTree:
+                lastChildInTree.parent.right = None
+            else:
+                lastChildInTree.parent.left = None
 
-        lastChildInTree.right = oldRoot.right
-        if lastChildInTree.right:
-            lastChildInTree.right.parent = lastChildInTree
+            oldRoot = self.root
 
-        lastChildInTree.left = oldRoot.left
-        if lastChildInTree.left:
-            lastChildInTree.left.parent = lastChildInTree
+            self.root = lastChildInTree
+            self.root.parent = None
 
-        print("smallest: ", oldRoot.value)
+            lastChildInTree.right = oldRoot.right
+            if lastChildInTree.right:
+                lastChildInTree.right.parent = lastChildInTree
+
+            lastChildInTree.left = oldRoot.left
+            if lastChildInTree.left:
+                lastChildInTree.left.parent = lastChildInTree
+
+            print("smallest: ", oldRoot.value)
 
 
-        self.moveNodeDown(lastChildInTree)
+            self.moveNodeDown(lastChildInTree)
 
-        print("root: ", self.root.value)
-        if self.root.right:
-            print("root.right: ", self.root.right.value)
-            if self.root.right.right:
-                print("root.right.right: ", self.root.right.right.value)
-        if self.root.left:
-            print("root.left: ", self.root.left.value)
-            if self.root.left.left:
-                print("root.left.left: ", self.root.left.left.value)
-            if self.root.left.right:
-                print("root.left.right: ", self.root.left.right.value)
 
-        print("---")
 
     def moveNodeDown(self, node: Node):
-        while (node.left or node.right):
-            if node.left and (node.value > node.left.value or node.value > node.right.value):
-                print("HOW TO MAKE IT WORK THAT IT COMPARES LEFT AND RIGHT?")
-
-                if node.right and node.left.value > node.right.value:
+        while (node.left and node.value > node.left.value) or (node.right and node.value > node.right.value):
+            if node.left and node.right and (node.value > node.left.value or node.value > node.right.value):
+                if node.left.value > node.right.value:
                     self._swapNodes(node.right, node)
                 else:
                     self._swapNodes(node.left, node)
+            elif node.left and node.value > node.left.value:
+                self._swapNodes(node.left, node)
+            elif node.right and node.value > node.right.value:
+                self._swapNodes(node.right, node)
 
 
-            #if node.right:
-            #self._swapNodes(node.right, node)
+    def isHeapEmpty(self):
+        return self.root is None
+
+    def printTree(self):
+        print("...")
+        if self.root.right:
+            if self.root.right.right:
+                print("  " + "root.right.right: ", self.root.right.right.value)
+                print("  " + "root.right.right.parent: ", self.root.right.right.parent.value)
+            if self.root.right.left:
+                print("  " + "root.right.left: ", self.root.right.left.value)
+                print("  " + "root.right.left.parent: ", self.root.right.left.parent.value)
+
+            print(" " + "root.right: ", self.root.right.value)
+            print(" " + "root.right.parent: ", self.root.right.parent.value)
+
+        print("root: ", self.root.value)
+
+        if self.root.left:
+            print(" " + "root.left: ", self.root.left.value)
+            print(" " + "root.left.parent: ", self.root.left.parent.value)
+            if self.root.left.right:
+                print("  " + "root.left.right: ", self.root.left.right.value)
+                print("  " + "root.left.right.parent: ", self.root.left.right.parent.value)
+            if self.root.left.left:
+                print("  " + "root.left.left: ", self.root.left.left.value)
+                print("  " + "root.left.left.parent: ", self.root.left.left.parent.value)
+                if self.root.left.left.left:
+                    print("   " + "root.left.left.left: ", self.root.left.left.left.value)
+                    print("   " + "root.left.left.left.parent: ", self.root.left.left.left.parent.value)
+                if self.root.left.left.right:
+                    print("   " + "root.left.left.right: ", self.root.left.left.right.value)
+                    print("   " + "root.left.left.right.parent: ", self.root.left.left.right.parent.value)
+        print("...")
+
+
+
 
 
 
@@ -197,20 +212,39 @@ def main():
     h = Heap()
     h.add(2)
     h.add(4)
+    h.printTree()
+    h.add(9)
     h.add(5)
-    h.add(6)
+
     h.add(7)
+    h.printTree()
 
     h.add(8)
-    h.add(9)
+    h.add(6)
+
     h.add(10)
 
-    h.getAndRemoveSmallest()
+    h.printTree()
 
+    # h.getAndRemoveSmallest()
+    # h.printTree()
+    # h.getAndRemoveSmallest()
+    # h.printTree()
+    #
+    # print(h.findLastChild().value)
+    # print(h.root.value)
+    # h.getAndRemoveSmallest()
+    # print(h.root.value)
+    # h.printTree()
+    # h.getAndRemoveSmallest()
+    # h.printTree()
+    # h.getAndRemoveSmallest()
+    # h.printTree()
+    # h.getAndRemoveSmallest()
+    # #print(h.findLastChild().value)
+    # h.getAndRemoveSmallest()
 
-    h.getAndRemoveSmallest()
-    h.getAndRemoveSmallest()
-
+    #h.getAndRemoveSmallest()
     #h.getAndRemoveSmallest()
     #h.getAndRemoveSmallest()
 
