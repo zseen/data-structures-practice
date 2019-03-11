@@ -2,6 +2,7 @@ from IHeap import IHeap
 from HeapIsEmptyException import HeapIsEmptyException
 
 import queue
+from typing import List
 
 
 class Node:
@@ -13,8 +14,10 @@ class Node:
 
 
 class BinaryTreeWithNodesBasedHeap(IHeap):
-    def __init__(self):
+    def __init__(self, initialElements: List):
         self.root = None
+        for element in initialElements:
+            self.add(element)
 
     def add(self, element: int) -> None:
         newNode = Node(element)
@@ -184,31 +187,3 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 parentNode.right.parent = parentNode
             childNode.right = parentNode
 
-
-def main():
-    h = BinaryTreeWithNodesBasedHeap()
-    h.add(2)
-    h.add(35)
-    h.add(4)
-    h.add(8)
-    h.add(72)
-    h.add(5)
-    h.add(7)
-    h.add(9)
-    h.add(6)
-    h.add(1)
-    h.add(15)
-    h.add(27)
-    h.add(10)
-    h.add(60)
-    h.add(14)
-
-    for _ in range(10):
-        print(h.getAndRemoveSmallest())
-
-    h.add(34)
-    h.add(43)
-    h.printUpToThreeLayersOfTreeWithParents()
-
-if __name__ == '__main__':
-    main()
