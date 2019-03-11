@@ -12,7 +12,7 @@ class Node:
         self.parent = None
 
 
-class Heap(IHeap):
+class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self):
         self.root = None
 
@@ -186,7 +186,7 @@ class Heap(IHeap):
 
 
 def main():
-    h = Heap()
+    h = BinaryTreeWithNodesBasedHeap()
     h.add(2)
     h.add(35)
     h.add(4)
