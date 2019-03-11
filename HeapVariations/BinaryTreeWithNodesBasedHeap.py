@@ -25,7 +25,7 @@ class Heap(IHeap):
         if not self.root:
             self.root = newNode
         else:
-            parentNode: Node = self._findParentOfFirstMissingChild()
+            parentNode: Node = self.findParentOfFirstMissingChild()
 
             if not parentNode.left:
                 parentNode.left = newNode
@@ -34,7 +34,7 @@ class Heap(IHeap):
 
             newNode.parent = parentNode
 
-    def _findParentOfFirstMissingChild(self) -> Node:
+    def findParentOfFirstMissingChild(self) -> Node:
         nodesToVisit: queue.deque = queue.deque()
         nodesToVisit.appendleft(self.root)
         visitedNodes: set = set()
@@ -95,8 +95,7 @@ class Heap(IHeap):
                 parentNode.right.parent = parentNode
             childNode.right = parentNode
 
-
-    def findLastChild(self):
+    def findLastChild(self) -> Node:
         nodesToVisit: queue.deque = queue.deque()
         nodesToVisit.appendleft(self.root)
         visitedNodes: set = set()
@@ -111,21 +110,19 @@ class Heap(IHeap):
                 nodesToVisit.appendleft(currentNode.right)
             else:
                 if currentNode.left:
-                    #print("lastChild: ", currentNode.left.value)
                     return currentNode.left
 
-
-        #print("lastChild: ", currentNode.value)
         return currentNode
 
-
-    def getAndRemoveSmallest(self):
+    def getAndRemoveSmallest(self) -> int:
         if self.isHeapEmpty():
             raise HeapIsEmptyException("Heap empty - cannot return data")
 
+        oldRoot: Node = self.root
+
         if not self.root.right and not self.root.left:
-            print("smallest: ", self.root.value)
             self.root = None
+            return oldRoot.value
         else:
             lastChildInTree: Node = self.findLastChild()
 
@@ -133,8 +130,6 @@ class Heap(IHeap):
                 lastChildInTree.parent.right = None
             else:
                 lastChildInTree.parent.left = None
-
-            oldRoot = self.root
 
             self.root = lastChildInTree
             self.root.parent = None
@@ -147,12 +142,8 @@ class Heap(IHeap):
             if lastChildInTree.left:
                 lastChildInTree.left.parent = lastChildInTree
 
-            print("smallest: ", oldRoot.value)
-
-
             self.moveNodeDown(lastChildInTree)
-
-
+            return oldRoot.value
 
     def moveNodeDown(self, node: Node):
         while (node.left and node.value > node.left.value) or (node.right and node.value > node.right.value):
@@ -163,14 +154,14 @@ class Heap(IHeap):
                     self._swapNodes(node.left, node)
             elif node.left and node.value > node.left.value:
                 self._swapNodes(node.left, node)
-            elif node.right and node.value > node.right.value:
-                self._swapNodes(node.right, node)
-
 
     def isHeapEmpty(self):
         return self.root is None
 
-    def printTree(self):
+    def printUpToThreeLayersOfTree(self):
+        if self.isHeapEmpty():
+            raise HeapIsEmptyException("Heap empty - cannot return data")
+
         print("...")
         if self.root.right:
             if self.root.right.right:
@@ -194,59 +185,66 @@ class Heap(IHeap):
             if self.root.left.left:
                 print("  " + "root.left.left: ", self.root.left.left.value)
                 print("  " + "root.left.left.parent: ", self.root.left.left.parent.value)
-                if self.root.left.left.left:
-                    print("   " + "root.left.left.left: ", self.root.left.left.left.value)
-                    print("   " + "root.left.left.left.parent: ", self.root.left.left.left.parent.value)
-                if self.root.left.left.right:
-                    print("   " + "root.left.left.right: ", self.root.left.left.right.value)
-                    print("   " + "root.left.left.right.parent: ", self.root.left.left.right.parent.value)
+
         print("...")
-
-
-
-
-
 
 
 def main():
     h = Heap()
     h.add(2)
     h.add(4)
-    h.printTree()
-    h.add(9)
-    h.add(5)
-
-    h.add(7)
-    h.printTree()
-
     h.add(8)
+    h.add(5)
+    h.add(7)
+    #h.printUpToThreeLayersOfTree()
+    h.add(9)
     h.add(6)
-
+    #h.printUpToThreeLayersOfTree()
+    #print(h.findParentOfFirstMissingChild().value) #### MAKE METHOD PRIVATE!
+    h.add(1)
+    #print("PROBLEM BELOW?")
+    #h.printUpToThreeLayersOfTree()
+    h.add(15)
+    h.add(27)
     h.add(10)
+    h.add(60)
+    h.add(14)
+    #h.printUpToThreeLayersOfTree()
 
-    h.printTree()
+    #h.printUpToThreeLayersOfTree()
 
-    # h.getAndRemoveSmallest()
-    # h.printTree()
-    # h.getAndRemoveSmallest()
-    # h.printTree()
+    # print(h.root.left.right.left.value)
+    # print(h.root.left.right.left.parent.value)
+    # print("..")
+    # print(h.root.left.right.right.value)
+    # print(h.root.left.right.right.parent.value)
+    # print("..")
     #
-    # print(h.findLastChild().value)
-    # print(h.root.value)
-    # h.getAndRemoveSmallest()
-    # print(h.root.value)
-    # h.printTree()
-    # h.getAndRemoveSmallest()
-    # h.printTree()
-    # h.getAndRemoveSmallest()
-    # h.printTree()
-    # h.getAndRemoveSmallest()
-    # #print(h.findLastChild().value)
-    # h.getAndRemoveSmallest()
+    # print(h.root.right.left.right.value)
+    # print(h.root.right.left.right.parent.value)
+    # print("..")
+    #
+    # print(h.root.right.left.left.value)
+    # print(h.root.right.left.left.parent.value)
 
-    #h.getAndRemoveSmallest()
-    #h.getAndRemoveSmallest()
-    #h.getAndRemoveSmallest()
+    #print(h.root.right.right.left.value)
+    #print(h.findLastChild().value)
+
+    # h.getAndRemoveSmallest()
+    # #h.getAndRemoveSmallest()
+    #
+    # #h.printTree()
+    #
+
+    for x in range(13):
+        print(h.getAndRemoveSmallest())
+
+    #h.printUpToThreeLayersOfTree()
+    # print(h.root.left.right.left.value)
+    # print(h.root.left.right.left.parent.value)
+    # print("..")
+    #print(h.findLastChild().value)
+
 
 
 
