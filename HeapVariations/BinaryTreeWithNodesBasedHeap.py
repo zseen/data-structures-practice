@@ -37,25 +37,25 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             self.root = None
             return oldRoot.value
         else:
-            lastChildInTree: Node = self._findLastChild()
+            newRoot: Node = self._findLastChild()
 
-            if lastChildInTree.parent.right is lastChildInTree:
-                lastChildInTree.parent.right = None
+            if newRoot.parent.right is newRoot:
+                newRoot.parent.right = None
             else:
-                lastChildInTree.parent.left = None
+                newRoot.parent.left = None
 
-            self.root = lastChildInTree
-            self.root.parent = None
+            newRoot.parent = None
+            self.root = newRoot
 
-            lastChildInTree.right = oldRoot.right
-            if lastChildInTree.right:
-                lastChildInTree.right.parent = lastChildInTree
+            if oldRoot.right:
+                oldRoot.right.parent = self.root
+            self.root.right = oldRoot.right
 
-            lastChildInTree.left = oldRoot.left
-            if lastChildInTree.left:
-                lastChildInTree.left.parent = lastChildInTree
+            if oldRoot.left:
+                oldRoot.left.parent = self.root
+            self.root.left = oldRoot.left
 
-            self._moveNodeDown(lastChildInTree)
+            self._moveNodeDown(newRoot)
             return oldRoot.value
 
     def printUpToThreeLayersOfTreeWithParents(self) -> None:
@@ -140,16 +140,17 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
     def _moveNodeDown(self, node: Node) -> None:
         while (node.left and node.value > node.left.value) or (node.right and node.value > node.right.value):
-            if (not node.right) or (node.right.value > node.left.value):
+            shouldSwapToLeft = (not node.right) or (node.right.value > node.left.value)
+            if shouldSwapToLeft:
                 self._swapNodes(node.left, node)
             else:
                 self._swapNodes(node.right, node)
 
     def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        self._swapChildren(childNode, parentNode)
-        self._swapParent(childNode, parentNode)
+        self._directionDependentSwap(childNode, parentNode)
+        self._notDirectionDependentSwap(childNode, parentNode)
 
-    def _swapParent(self, childNode: Node, parentNode: Node) -> None:
+    def _notDirectionDependentSwap(self, childNode: Node, parentNode: Node) -> None:
         if parentNode is self.root:
             self.root = childNode
             self.root.parent = None
@@ -163,27 +164,28 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         parentNode.parent = childNode
 
     @staticmethod
-    def _swapChildren(childNode: Node, parentNode: Node) -> None:
+    def _directionDependentSwap(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
-            childNode.right, parentNode.right = parentNode.right, childNode.right
-            if parentNode.right:
-                parentNode.right.parent = parentNode
             if childNode.right:
-                childNode.right.parent = childNode
+                childNode.right.parent = parentNode
+            if parentNode.right:
+                parentNode.right.parent = childNode
 
+            childNode.right, parentNode.right = parentNode.right, childNode.right
+
+            if childNode.left:
+                childNode.left.parent = parentNode
             parentNode.left = childNode.left
-            if parentNode.left:
-                parentNode.left.parent = parentNode
             childNode.left = parentNode
         else:
-            childNode.left, parentNode.left = parentNode.left, childNode.left
-            if parentNode.left:
-                parentNode.left.parent = parentNode
             if childNode.left:
-                childNode.left.parent = childNode
+                childNode.left.parent = parentNode
+            if parentNode.left:
+                parentNode.left.parent = childNode
 
+            childNode.left, parentNode.left = parentNode.left, childNode.left
+
+            if childNode.right:
+                childNode.right.parent = parentNode
             parentNode.right = childNode.right
-            if parentNode.right:
-                parentNode.right.parent = parentNode
             childNode.right = parentNode
-
