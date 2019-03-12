@@ -73,21 +73,39 @@ class Heap(IHeap):
     def _swapChildren(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
             childNode.right, parentNode.right = parentNode.right, childNode.right
+            if parentNode.right:
+                parentNode.right.parent = parentNode
+            if childNode.right:
+                childNode.right.parent = childNode
+
             parentNode.left = childNode.left
+            if parentNode.left:
+                parentNode.left.parent = parentNode
             childNode.left = parentNode
         else:
             childNode.left, parentNode.left = parentNode.left, childNode.left
+            if parentNode.left:
+                parentNode.left.parent = parentNode
+            if childNode.left:
+                childNode.left.parent = childNode
+
             parentNode.right = childNode.right
+            if parentNode.right:
+                parentNode.right.parent = parentNode
             childNode.right = parentNode
 
 
 def main():
     h = Heap()
-    h.add(4)
-    print(h.root.value)
     h.add(2)
-    print(h.root.value)
-    print(h.root.left.value)
+    h.add(4)
+    h.add(9)
+    h.add(5)
+    h.add(7)
+    h.add(8)
+    h.add(6)
+    h.add(10)
+
 
 if __name__ == '__main__':
     main()
