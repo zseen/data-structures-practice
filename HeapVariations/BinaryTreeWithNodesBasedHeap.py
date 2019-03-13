@@ -1,6 +1,8 @@
 from IHeap import IHeap
+from HeapIsEmptyException import HeapIsEmptyException
 
 import queue
+from typing import List
 
 
 class Node:
@@ -11,14 +13,51 @@ class Node:
         self.parent = None
 
 
-class Heap(IHeap):
-    def __init__(self):
+class BinaryTreeWithNodesBasedHeap(IHeap):
+    def __init__(self, initialElements: List):
         self.root = None
+        for element in initialElements:
+            self.add(element)
 
     def add(self, element: int) -> None:
         newNode = Node(element)
         self._insertNodeAtInitialPosition(newNode)
         self._moveNodeUp(newNode)
+
+    def isHeapEmpty(self) -> bool:
+        return self.root is None
+
+    def getAndRemoveSmallest(self) -> int:
+        if self.isHeapEmpty():
+            raise HeapIsEmptyException("Heap empty - cannot return data")
+
+        oldRoot: Node = self.root
+
+        if not self.root.right and not self.root.left:
+            self.root = None
+            return oldRoot.value
+        else:
+            newRoot: Node = self._findLastChild()
+
+            if newRoot.parent.right is newRoot:
+                newRoot.parent.right = None
+            else:
+                newRoot.parent.left = None
+            newRoot.parent = None
+
+            self.root = newRoot
+
+            if oldRoot.right:
+                oldRoot.right.parent = self.root
+            self.root.right = oldRoot.right
+
+            if oldRoot.left:
+                oldRoot.left.parent = self.root
+            self.root.left = oldRoot.left
+
+            self._moveNodeDown(newRoot)
+            return oldRoot.value
+
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
         if not self.root:
@@ -48,15 +87,41 @@ class Heap(IHeap):
             else:
                 return currentNode
 
+    def _findLastChild(self) -> Node:
+        nodesToVisit: queue.deque = queue.deque()
+        nodesToVisit.appendleft(self.root)
+        visitedNodes: set = set()
+        currentNode = None
+
+        while nodesToVisit:
+            currentNode = nodesToVisit.pop()
+            visitedNodes.add(currentNode)
+
+            if currentNode.left and currentNode.right:
+                nodesToVisit.appendleft(currentNode.left)
+                nodesToVisit.appendleft(currentNode.right)
+            elif currentNode.left:
+                return currentNode.left
+
+        return currentNode
+
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
             self._swapNodes(node, node.parent)
 
-    def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
-        self._swapChildren(childNode, parentNode)
-        self._swapParent(childNode, parentNode)
+    def _moveNodeDown(self, node: Node) -> None:
+        while (node.left and node.value > node.left.value) or (node.right and node.value > node.right.value):
+            shouldSwapToLeft = (not node.right) or (node.right.value > node.left.value)
+            if shouldSwapToLeft:
+                self._swapNodes(node.left, node)
+            else:
+                self._swapNodes(node.right, node)
 
-    def _swapParent(self, childNode: Node, parentNode: Node) -> None:
+    def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
+        self._directionDependentSwap(childNode, parentNode)
+        self._notDirectionDependentSwap(childNode, parentNode)
+
+    def _notDirectionDependentSwap(self, childNode: Node, parentNode: Node) -> None:
         if parentNode is self.root:
             self.root = childNode
             self.root.parent = None
@@ -70,42 +135,28 @@ class Heap(IHeap):
         parentNode.parent = childNode
 
     @staticmethod
-    def _swapChildren(childNode: Node, parentNode: Node) -> None:
+    def _directionDependentSwap(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
-            childNode.right, parentNode.right = parentNode.right, childNode.right
-            if parentNode.right:
-                parentNode.right.parent = parentNode
             if childNode.right:
-                childNode.right.parent = childNode
+                childNode.right.parent = parentNode
+            if parentNode.right:
+                parentNode.right.parent = childNode
 
+            childNode.right, parentNode.right = parentNode.right, childNode.right
+
+            if childNode.left:
+                childNode.left.parent = parentNode
             parentNode.left = childNode.left
-            if parentNode.left:
-                parentNode.left.parent = parentNode
             childNode.left = parentNode
         else:
-            childNode.left, parentNode.left = parentNode.left, childNode.left
-            if parentNode.left:
-                parentNode.left.parent = parentNode
             if childNode.left:
-                childNode.left.parent = childNode
+                childNode.left.parent = parentNode
+            if parentNode.left:
+                parentNode.left.parent = childNode
 
+            childNode.left, parentNode.left = parentNode.left, childNode.left
+
+            if childNode.right:
+                childNode.right.parent = parentNode
             parentNode.right = childNode.right
-            if parentNode.right:
-                parentNode.right.parent = parentNode
             childNode.right = parentNode
-
-
-def main():
-    h = Heap()
-    h.add(2)
-    h.add(4)
-    h.add(9)
-    h.add(5)
-    h.add(7)
-    h.add(8)
-    h.add(6)
-    h.add(10)
-
-
-if __name__ == '__main__':
-    main()
