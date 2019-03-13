@@ -43,8 +43,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 newRoot.parent.right = None
             else:
                 newRoot.parent.left = None
-
             newRoot.parent = None
+
             self.root = newRoot
 
             if oldRoot.right:
@@ -58,34 +58,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             self._moveNodeDown(newRoot)
             return oldRoot.value
 
-    def printUpToThreeLayersOfTreeWithParents(self) -> None:
-        if self.isHeapEmpty():
-            raise HeapIsEmptyException("Heap empty - cannot print tree")
-
-        print("...")
-        if self.root.right:
-            if self.root.right.right:
-                print("  " + "root.right.right: ", self.root.right.right.value)
-                print("  " + "root.right.right.parent: ", self.root.right.right.parent.value)
-            if self.root.right.left:
-                print("  " + "root.right.left: ", self.root.right.left.value)
-                print("  " + "root.right.left.parent: ", self.root.right.left.parent.value)
-
-            print(" " + "root.right: ", self.root.right.value)
-            print(" " + "root.right.parent: ", self.root.right.parent.value)
-
-        print("root: ", self.root.value)
-
-        if self.root.left:
-            print(" " + "root.left: ", self.root.left.value)
-            print(" " + "root.left.parent: ", self.root.left.parent.value)
-            if self.root.left.right:
-                print("  " + "root.left.right: ", self.root.left.right.value)
-                print("  " + "root.left.right.parent: ", self.root.left.right.parent.value)
-            if self.root.left.left:
-                print("  " + "root.left.left: ", self.root.left.left.value)
-                print("  " + "root.left.left.parent: ", self.root.left.left.parent.value)
-        print("...")
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
         if not self.root:
@@ -128,9 +100,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             if currentNode.left and currentNode.right:
                 nodesToVisit.appendleft(currentNode.left)
                 nodesToVisit.appendleft(currentNode.right)
-            else:
-                if currentNode.left:
-                    return currentNode.left
+            elif currentNode.left:
+                return currentNode.left
 
         return currentNode
 
