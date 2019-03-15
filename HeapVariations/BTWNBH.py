@@ -1,8 +1,6 @@
 from IHeap import IHeap
 from HeapIsEmptyException import HeapIsEmptyException
 
-import queue
-from typing import List
 import math
 
 
@@ -21,12 +19,54 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self.currentNode = self.root
         self.currentLayerCapacity = 0
 
-    def add(self, element: int):
+    def add(self, element: int) -> None:
         newNode = Node(element)
-        self.insertNodeAtInitialPosition(newNode)
+        self._insertNodeAtInitialPosition(newNode)
         self._moveNodeUp(newNode)
 
-    def insertNodeAtInitialPosition(self, newNode: Node):
+    def isHeapEmpty(self) -> bool:
+        return self.root is None
+
+    def getAndRemoveSmallest(self) -> int:
+        oldRoot: Node = self.root
+
+        if not self.root.right and not self.root.left:
+            self.root = None
+            return oldRoot.value
+
+        newRoot = self.getLastChild()
+
+        if newRoot.parent.right is newRoot:
+            newRoot.parent.right = None
+        else:
+            newRoot.parent.left = None
+        newRoot.parent = None
+
+        self.root = newRoot
+        self.currentSize -= 1
+
+        if oldRoot.right:
+            oldRoot.right.parent = self.root
+        self.root.right = oldRoot.right
+
+        if oldRoot.left:
+            oldRoot.left.parent = self.root
+        self.root.left = oldRoot.left
+
+        self._moveNodeDown(newRoot)
+        return oldRoot.value
+
+    def getLastChild(self) -> Node:
+        self.currentNode = self.root
+        lastChildPosition = self.getBinaryValueOfNodePosition()
+        for char in lastChildPosition[3:]:
+            if char == "0":
+                self.goLeft()
+            elif char == "1":
+                self.goRight()
+        return self.currentNode
+
+    def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
         if not self.root:
             self.root = newNode
             self.currentSize += 1
@@ -42,13 +82,13 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                         self.goLeft()
                     else:
                         self.currentNode.left = newNode
-                        newNode.parent = self.currentNode
                 elif char == "1":
                     if self.currentNode.right:
                         self.goRight()
                     else:
                         self.currentNode.right = newNode
-                        newNode.parent = self.currentNode
+
+                newNode.parent = self.currentNode
 
     def goLeft(self):
         self.currentNode = self.currentNode.left
@@ -56,8 +96,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
     def goRight(self):
         self.currentNode = self.currentNode.right
 
-
-    def getLayerCapacity(self):
+    def getLayerCapacity(self) -> None:
         if not self.root:
             self.currentLayerCapacity = 1
         else:
@@ -65,12 +104,11 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 if math.pow(2, i) > self.currentSize:
                     self.currentLayerCapacity = math.pow(2, i - 1)
 
-
-    def getNodePositionInLayer(self):
+    def getNodePositionInLayer(self) -> int:
         nodePosition = self.currentSize - self.currentLayerCapacity
         return nodePosition
 
-    def getBinaryValueOfNodePosition(self):
+    def getBinaryValueOfNodePosition(self) -> str:
         nodePosition = self.getNodePositionInLayer()
         binaryNodePosition = bin(nodePosition)
         return binaryNodePosition
@@ -78,6 +116,14 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
             self._swapNodes(node, node.parent)
+
+    def _moveNodeDown(self, node: Node) -> None:
+        while (node.left and node.value > node.left.value) or (node.right and node.value > node.right.value):
+            shouldSwapToLeft = (not node.right) or (node.right.value > node.left.value)
+            if shouldSwapToLeft:
+                self._swapNodes(node.left, node)
+            else:
+                self._swapNodes(node.right, node)
 
     def _swapNodes(self, childNode: Node, parentNode: Node) -> None:
         self._directionDependentSwap(childNode, parentNode)
@@ -124,8 +170,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             childNode.right = parentNode
 
     def printUpToThreeLayersOfTreeWithParents(self) -> None:
-        # if self.isHeapEmpty():
-        #     raise HeapIsEmptyException("Heap empty - cannot print tree")
+        if self.isHeapEmpty():
+            raise HeapIsEmptyException("Heap empty - cannot print tree")
 
         print("...")
         if self.root.right:
@@ -161,6 +207,11 @@ def main():
     h.add(50)
     h.add(1)
     h.add(70)
+
+    #h.printUpToThreeLayersOfTreeWithParents()
+
+    for _ in range(6):
+        print(h.getAndRemoveSmallest())
 
     h.printUpToThreeLayersOfTreeWithParents()
 
