@@ -61,8 +61,9 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
     def getLastChild(self) -> Node:
         self.currentNode = self.root
-        lastChildPosition = self.getBinaryValueOfNodePosition()
-        for char in lastChildPosition[3:]:
+        lastChildPositionBinary = self.getBinaryValueOfNodePosition()
+
+        for char in lastChildPositionBinary[3:]:
             if char == "0":
                 self.goLeft()
             elif char == "1":
