@@ -17,7 +17,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self, initialElements: List):
         self.root = None
         self.currentSize = 0
-        self.currentNode = self.root
+        #self.currentNode = self.root
         self.currentLayerCapacity = 0
         for element in initialElements:
             self.add(element)
@@ -31,13 +31,16 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         return self.root is None
 
     def getAndRemoveSmallest(self) -> int:
+        if self.isHeapEmpty():
+            raise HeapIsEmptyException("Heap empty - cannot return data")
+
         oldRoot: Node = self.root
 
         if not self.root.right and not self.root.left:
             self.root = None
             return oldRoot.value
 
-        newRoot = self.getLastChild()
+        newRoot = self._getLastChild()
 
         if newRoot.parent.right is newRoot:
             newRoot.parent.right = None
@@ -59,63 +62,57 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self._moveNodeDown(newRoot)
         return oldRoot.value
 
-    def getLastChild(self) -> Node:
-        self.currentNode = self.root
-        lastChildPositionBinary = self.getBinaryValueOfNodePosition()
-
-        for char in lastChildPositionBinary[3:]:
-            if char == "0":
-                self.goLeft()
-            elif char == "1":
-                self.goRight()
-        return self.currentNode
-
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
         if not self.root:
             self.root = newNode
             self.currentSize += 1
         else:
-            self.currentNode = self.root
             self.currentSize += 1
+            currentNode = self.root
 
-            newNodePositionInBinary = self.getBinaryValueOfNodePosition()
-
+            newNodePositionInBinary = self._getBinaryValueOfNodePosition()
             for char in newNodePositionInBinary[3:]:
                 if char == "0":
-                    if self.currentNode.left:
-                        self.goLeft()
+                    if currentNode.left:
+                        currentNode = currentNode.left
                     else:
-                        self.currentNode.left = newNode
+                        currentNode.left = newNode
                 elif char == "1":
-                    if self.currentNode.right:
-                        self.goRight()
+                    if currentNode.right:
+                        currentNode = currentNode.right
                     else:
-                        self.currentNode.right = newNode
+                        currentNode.right = newNode
 
-                newNode.parent = self.currentNode
+                newNode.parent = currentNode
 
-    def goLeft(self):
-        self.currentNode = self.currentNode.left
+    def _getLastChild(self) -> Node:
+        currentNode = self.root
+        lastChildPositionBinary = self._getBinaryValueOfNodePosition()
 
-    def goRight(self):
-        self.currentNode = self.currentNode.right
+        for char in lastChildPositionBinary[3:]:
+            if char == "0":
+                currentNode = currentNode.left
+            elif char == "1":
+                currentNode = currentNode.right
+        return currentNode
 
-    def getLayerCapacity(self) -> None:
-        if not self.root:
-            self.currentLayerCapacity = 1
-        else:
-            for i in range(1, 10000):
-                if math.pow(2, i) > self.currentSize:
-                    self.currentLayerCapacity = math.pow(2, i - 1)
-
-    def getNodePositionInLayer(self) -> int:
+    def _getBinaryValueOfNodePosition(self) -> str:
         nodePosition = self.currentSize - self.currentLayerCapacity
-        return nodePosition
-
-    def getBinaryValueOfNodePosition(self) -> str:
-        nodePosition = self.getNodePositionInLayer()
         binaryNodePosition = bin(nodePosition)
         return binaryNodePosition
+
+    def _getLayerCapacity(self) -> int:
+        currentLayerCapacity = 0
+        if not self.root:
+            currentLayerCapacity = 1
+        else:
+            i = 0
+            while math.pow(2, i) < self.currentSize:
+                currentLayerCapacity = math.pow(2, i)
+                i += 1
+        return currentLayerCapacity
+
+
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
@@ -173,49 +170,17 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             parentNode.right = childNode.right
             childNode.right = parentNode
 
-    def printUpToThreeLayersOfTreeWithParents(self) -> None:
-        if self.isHeapEmpty():
-            raise HeapIsEmptyException("Heap empty - cannot print tree")
 
-        print("...")
-        if self.root.right:
-            if self.root.right.right:
-                print("  " + "root.right.right: ", self.root.right.right.value)
-                print("  " + "root.right.right.parent: ", self.root.right.right.parent.value)
-            if self.root.right.left:
-                print("  " + "root.right.left: ", self.root.right.left.value)
-                print("  " + "root.right.left.parent: ", self.root.right.left.parent.value)
+def main():
+    h = BinaryTreeWithNodesBasedHeap([12, 8, 20, 34, 2, 30, 3, 53, 4, 50, 1, 70])
 
-            print(" " + "root.right: ", self.root.right.value)
-            print(" " + "root.right.parent: ", self.root.right.parent.value)
+    for _ in range(11):
+        print(h.getAndRemoveSmallest())
 
-        print("root: ", self.root.value)
 
-        if self.root.left:
-            print(" " + "root.left: ", self.root.left.value)
-            print(" " + "root.left.parent: ", self.root.left.parent.value)
-            if self.root.left.right:
-                print("  " + "root.left.right: ", self.root.left.right.value)
-                print("  " + "root.left.right.parent: ", self.root.left.right.parent.value)
-            if self.root.left.left:
-                print("  " + "root.left.left: ", self.root.left.left.value)
-                print("  " + "root.left.left.parent: ", self.root.left.left.parent.value)
-        print("...")
 
-# def main():
-#     h = BinaryTreeWithNodesBasedHeap([8, 2, 30, 4, 50, 1, 70])
-#
-#
-#     #h.printUpToThreeLayersOfTreeWithParents()
-#
-#     for _ in range(6):
-#         print(h.getAndRemoveSmallest())
-#
-#     h.printUpToThreeLayersOfTreeWithParents()
-#
-#
-#
-# if __name__ == '__main__':
-#     main()
+
+if __name__ == '__main__':
+    main()
 
 
