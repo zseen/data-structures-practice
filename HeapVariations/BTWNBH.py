@@ -97,22 +97,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         return currentNode
 
     def _getBinaryValueOfNodePosition(self) -> str:
-        nodePosition = self.currentSize - self.currentLayerCapacity
-        binaryNodePosition = bin(nodePosition)
-        return binaryNodePosition
-
-    def _getLayerCapacity(self) -> int:
-        currentLayerCapacity = 0
-        if not self.root:
-            currentLayerCapacity = 1
-        else:
-            i = 0
-            while math.pow(2, i) < self.currentSize:
-                currentLayerCapacity = math.pow(2, i)
-                i += 1
-        return currentLayerCapacity
-
-
+        return bin(self.currentSize)
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
