@@ -2,6 +2,7 @@ import IHeap
 from BinaryTreeInArrayBasedHeap import BinaryTreeInArrayBasedHeap
 from SimpleArrayBasedHeap import SimpleArrayBasedHeap
 from BinaryTreeWithNodesBasedHeap import BinaryTreeWithNodesBasedHeap
+from DefaultPythonHeap import DefaultPythonHeap
 
 
 from typing import List
@@ -14,7 +15,7 @@ INITIAL_ELEMENTS_VALUES_RANGE: int = 100
 ADD_ELEMENTS_REPEAT_NUM: int = 15000
 REMOVE_ELEMENTS_REPEAT_NUM: int = 1500
 
-NUM_TEST_ITERATIONS: int = 10
+NUM_TEST_ITERATIONS: int = 20
 NUM_DIGITS_AFTER_DECIMAL_POINT: int = 4
 
 
@@ -48,9 +49,10 @@ def executeQueries(h: IHeap) -> None:
 
 def main():
     initialElements: List = [random.randrange(INITIAL_ELEMENTS_VALUES_RANGE) for _ in range(INITIAL_ELEMENTS_NUM)]
-    benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))  # 3.8224
-    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))  # 1.0059
-    benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))  # 2.8436
+    benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))  # 11.211
+    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))  # 1.2617
+    benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))  # 3.1434
+    benchmarkHeapImplementation(DefaultPythonHeap(initialElements))  # 0.772
 
 
 if __name__ == '__main__':
