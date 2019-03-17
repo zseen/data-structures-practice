@@ -46,7 +46,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         newRoot.parent = None
 
         self.root = newRoot
-        self.currentSize -= 1
 
         if oldRoot.right:
             oldRoot.right.parent = self.root
@@ -56,6 +55,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             oldRoot.left.parent = self.root
         self.root.left = oldRoot.left
 
+        self.currentSize -= 1
         self._moveNodeDown(newRoot)
         return oldRoot.value
 
