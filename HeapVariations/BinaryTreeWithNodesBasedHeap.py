@@ -1,7 +1,6 @@
 from IHeap import IHeap
 from HeapIsEmptyException import HeapIsEmptyException
 
-import queue
 from typing import List
 
 
@@ -16,6 +15,7 @@ class Node:
 class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self, initialElements: List):
         self.root = None
+        self.currentSize = 0
         for element in initialElements:
             self.add(element)
 
@@ -36,73 +36,61 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         if not self.root.right and not self.root.left:
             self.root = None
             return oldRoot.value
+
+        newRoot = self._getLastChild()
+
+        if newRoot.parent.right is newRoot:
+            newRoot.parent.right = None
         else:
-            newRoot: Node = self._findLastChild()
+            newRoot.parent.left = None
+        newRoot.parent = None
 
-            if newRoot.parent.right is newRoot:
-                newRoot.parent.right = None
-            else:
-                newRoot.parent.left = None
-            newRoot.parent = None
+        self.root = newRoot
+        self.currentSize -= 1
 
-            self.root = newRoot
+        if oldRoot.right:
+            oldRoot.right.parent = self.root
+        self.root.right = oldRoot.right
 
-            if oldRoot.right:
-                oldRoot.right.parent = self.root
-            self.root.right = oldRoot.right
+        if oldRoot.left:
+            oldRoot.left.parent = self.root
+        self.root.left = oldRoot.left
 
-            if oldRoot.left:
-                oldRoot.left.parent = self.root
-            self.root.left = oldRoot.left
-
-            self._moveNodeDown(newRoot)
-            return oldRoot.value
-
+        self._moveNodeDown(newRoot)
+        return oldRoot.value
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
         if not self.root:
             self.root = newNode
+            self.currentSize += 1
         else:
-            parentNode: Node = self._findParentOfFirstMissingChild()
+            self.currentSize += 1
+            currentNode = self.root
 
-            if not parentNode.left:
-                parentNode.left = newNode
-            else:
-                parentNode.right = newNode
+            newNodePositionInBinary = bin(self.currentSize)
+            for char in newNodePositionInBinary[3:]:
+                if char == "0":
+                    if currentNode.left:
+                        currentNode = currentNode.left
+                    else:
+                        currentNode.left = newNode
+                elif char == "1":
+                    if currentNode.right:
+                        currentNode = currentNode.right
+                    else:
+                        currentNode.right = newNode
 
-            newNode.parent = parentNode
+                newNode.parent = currentNode
 
-    def _findParentOfFirstMissingChild(self) -> Node:
-        nodesToVisit: queue.deque = queue.deque()
-        nodesToVisit.appendleft(self.root)
-        visitedNodes: set = set()
+    def _getLastChild(self) -> Node:
+        currentNode = self.root
+        lastChildPositionInBinary = bin(self.currentSize)
 
-        while nodesToVisit:
-            currentNode = nodesToVisit.pop()
-            visitedNodes.add(currentNode)
-
-            if currentNode.left and currentNode.right:
-                nodesToVisit.appendleft(currentNode.left)
-                nodesToVisit.appendleft(currentNode.right)
-            else:
-                return currentNode
-
-    def _findLastChild(self) -> Node:
-        nodesToVisit: queue.deque = queue.deque()
-        nodesToVisit.appendleft(self.root)
-        visitedNodes: set = set()
-        currentNode = None
-
-        while nodesToVisit:
-            currentNode = nodesToVisit.pop()
-            visitedNodes.add(currentNode)
-
-            if currentNode.left and currentNode.right:
-                nodesToVisit.appendleft(currentNode.left)
-                nodesToVisit.appendleft(currentNode.right)
-            elif currentNode.left:
-                return currentNode.left
-
+        for char in lastChildPositionInBinary[3:]:
+            if char == "0":
+                currentNode = currentNode.left
+            elif char == "1":
+                currentNode = currentNode.right
         return currentNode
 
     def _moveNodeUp(self, node: Node) -> None:

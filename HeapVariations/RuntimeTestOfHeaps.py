@@ -1,8 +1,8 @@
 import IHeap
 from BinaryTreeInArrayBasedHeap import BinaryTreeInArrayBasedHeap
 from SimpleArrayBasedHeap import SimpleArrayBasedHeap
-# from BinaryTreeWithNodesBasedHeap import BinaryTreeWithNodesBasedHeap
-from BTWNBH import BinaryTreeWithNodesBasedHeap as BTWNBH
+from BinaryTreeWithNodesBasedHeap import BinaryTreeWithNodesBasedHeap
+
 
 from typing import List
 import random
@@ -20,11 +20,9 @@ NUM_DIGITS_AFTER_DECIMAL_POINT: int = 4
 
 def modifyHeap(heap: IHeap, action: str) -> None:
     if action == "add":
-        #print("add")
         for repeat in range(ADD_ELEMENTS_REPEAT_NUM):
             heap.add(random.randrange(0, 100000))
     elif action == "remove":
-        #print("remove")
         for repeat in range(REMOVE_ELEMENTS_REPEAT_NUM):
             heap.getAndRemoveSmallest()
 
@@ -50,10 +48,9 @@ def executeQueries(h: IHeap) -> None:
 
 def main():
     initialElements: List = [random.randrange(INITIAL_ELEMENTS_VALUES_RANGE) for _ in range(INITIAL_ELEMENTS_NUM)]
-    benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))  #
-    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))  #
-    #benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))
-    benchmarkHeapImplementation(BTWNBH(initialElements))  #
+    benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))  # 3.8224
+    benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))  # 1.0059
+    benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))  # 2.8436
 
 
 if __name__ == '__main__':
