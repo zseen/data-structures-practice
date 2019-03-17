@@ -1,7 +1,6 @@
 from IHeap import IHeap
 from HeapIsEmptyException import HeapIsEmptyException
 
-import math
 from typing import List
 
 
@@ -17,8 +16,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self, initialElements: List):
         self.root = None
         self.currentSize = 0
-        #self.currentNode = self.root
-        self.currentLayerCapacity = 0
         for element in initialElements:
             self.add(element)
 
@@ -70,7 +67,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             self.currentSize += 1
             currentNode = self.root
 
-            newNodePositionInBinary = self._getBinaryValueOfNodePosition()
+            newNodePositionInBinary = bin(self.currentSize)
             for char in newNodePositionInBinary[3:]:
                 if char == "0":
                     if currentNode.left:
@@ -87,17 +84,14 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
     def _getLastChild(self) -> Node:
         currentNode = self.root
-        lastChildPositionBinary = self._getBinaryValueOfNodePosition()
+        lastChildPositionInBinary = bin(self.currentSize)
 
-        for char in lastChildPositionBinary[3:]:
+        for char in lastChildPositionInBinary[3:]:
             if char == "0":
                 currentNode = currentNode.left
             elif char == "1":
                 currentNode = currentNode.right
         return currentNode
-
-    def _getBinaryValueOfNodePosition(self) -> str:
-        return bin(self.currentSize)
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
@@ -156,16 +150,16 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             childNode.right = parentNode
 
 
-def main():
-    h = BinaryTreeWithNodesBasedHeap([12, 8, 20, 34, 2, 30, 3, 53, 4, 50, 1, 70])
-
-    for _ in range(11):
-        print(h.getAndRemoveSmallest())
-
-
-
-
-if __name__ == '__main__':
-    main()
+# def main():
+#     h = BinaryTreeWithNodesBasedHeap([12, 8, 20, 34, 2, 30, 3, 53, 4, 50, 1, 70])
+#
+#     for _ in range(11):
+#         print(h.getAndRemoveSmallest())
+#
+#
+#
+#
+# if __name__ == '__main__':
+#     main()
 
 
