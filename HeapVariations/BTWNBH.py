@@ -148,18 +148,3 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 childNode.right.parent = parentNode
             parentNode.right = childNode.right
             childNode.right = parentNode
-
-
-# def main():
-#     h = BinaryTreeWithNodesBasedHeap([12, 8, 20, 34, 2, 30, 3, 53, 4, 50, 1, 70])
-#
-#     for _ in range(11):
-#         print(h.getAndRemoveSmallest())
-#
-#
-#
-#
-# if __name__ == '__main__':
-#     main()
-
-
