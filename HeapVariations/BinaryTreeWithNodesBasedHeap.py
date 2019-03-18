@@ -65,32 +65,26 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             self.currentSize += 1
         else:
             self.currentSize += 1
-            currentNode = self.root
+            parentNode: Node = self._getLastChild()
 
-            newNodePositionInBinary = bin(self.currentSize)
-            for char in newNodePositionInBinary[3:]:
-                if char == "0":
-                    if currentNode.left:
-                        currentNode = currentNode.left
-                    else:
-                        currentNode.left = newNode
-                elif char == "1":
-                    if currentNode.right:
-                        currentNode = currentNode.right
-                    else:
-                        currentNode.right = newNode
+            if not parentNode.left:
+                parentNode.left = newNode
+            else:
+                parentNode.right = newNode
 
-                newNode.parent = currentNode
+            newNode.parent = parentNode
 
     def _getLastChild(self) -> Node:
         currentNode = self.root
         lastChildPositionInBinary = bin(self.currentSize)
 
-        for char in lastChildPositionInBinary[3:]:
+        for char in lastChildPositionInBinary[3:]:  # lastChildPositionInBinary starts with "0b", and also the first digit is not needed, as the path starts from the root
             if char == "0":
-                currentNode = currentNode.left
+                if currentNode.left:
+                    currentNode = currentNode.left
             elif char == "1":
-                currentNode = currentNode.right
+                if currentNode.right:
+                    currentNode = currentNode.right
         return currentNode
 
     def _moveNodeUp(self, node: Node) -> None:

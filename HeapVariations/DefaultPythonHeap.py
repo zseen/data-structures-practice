@@ -6,8 +6,8 @@ import heapq
 
 
 class DefaultPythonHeap(IHeap):
-    def __init__(self, heapList: List):
-        self.heapList = heapList
+    def __init__(self, initialElements: List):
+        self.heapList = initialElements.copy()
         heapq.heapify(self.heapList)
         self.isHeapSorted: bool = True
 
