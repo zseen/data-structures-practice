@@ -6,7 +6,7 @@ from typing import List
 
 class SimpleArrayBasedHeap(IHeap):
     def __init__(self, initialElements: List):
-        self.heapList: List = sorted(initialElements.copy())
+        self.heapList: List = sorted(initialElements)
         self.isHeapSorted: bool = True
 
     def isHeapEmpty(self) -> bool:
