@@ -4,6 +4,7 @@ from HeapIsEmptyException import HeapIsEmptyException
 from typing import List
 import unittest
 import random
+import math
 
 
 class Node:
@@ -36,6 +37,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         oldRoot: Node = self.root
 
         if not self.root.right and not self.root.left:
+            assert self.currentSize == 1
             self.root = None
             self.currentSize -= 1
             return oldRoot.value
@@ -78,18 +80,27 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             newNode.parent = parentNode
 
     def _getLastChild(self) -> Node:
-        currentNode = self.root
-        lastChildPositionInBinary = bin(self.currentSize)
+        currentNode: Node = self.root
+        currentLayerCapacity: int = int(self.getLayerCapacity())
+        #print("currentLayerCapacity: ", currentLayerCapacity)
+        lastChildPositionInBinary = bin(self.currentSize - currentLayerCapacity)
 
-        # lastChildPositionInBinary starts with "0b", and also the first digit is not needed, as thepath starts from the root
-        for char in lastChildPositionInBinary[3:]:
+        pathLength: int = int(math.log(currentLayerCapacity, 2))
+
+        pathString: str = self._addPaddingZeroes(lastChildPositionInBinary[2:], pathLength)
+        for char in pathString:
             if char == "0":
                 if currentNode.left:
                     currentNode = currentNode.left
             elif char == "1":
                 if currentNode.right:
                     currentNode = currentNode.right
+        #print(currentNode.value)
         return currentNode
+
+    def _addPaddingZeroes(self, lastChildPositionInBinary, pathLength):
+        return lastChildPositionInBinary.zfill(pathLength)
+
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
@@ -147,6 +158,14 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             parentNode.right = childNode.right
             childNode.right = parentNode
 
+    def getLayerCapacity(self) -> int:
+        currentLayerCapacity = 0
+        i = 0
+        while math.pow(2, i) <= self.currentSize:
+            currentLayerCapacity = math.pow(2, i)
+            i += 1
+        return currentLayerCapacity
+
     def printUpToThreeLayersOfTreeWithParents(self) -> None:
         if self.isHeapEmpty():
             raise HeapIsEmptyException("Heap empty - cannot print tree")
@@ -178,27 +197,29 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
 
 def main():
-    initialElements: List = [random.randrange(1000) for _ in range(30)]
+    initialElements: List = [random.randrange(1000) for _ in range(7)]
     h = BinaryTreeWithNodesBasedHeap(initialElements)
 
+    h.printUpToThreeLayersOfTreeWithParents()
+
     result = []
-    for i in range(30):
-        h.printUpToThreeLayersOfTreeWithParents()
+    for i in range(7):
+        #h.printUpToThreeLayersOfTreeWithParents()
         result.append(h.getAndRemoveSmallest())
 
     print(result == sorted(initialElements))
     print("current size of heap: ", h.currentSize)
     print("Heap is empty: ", h.isHeapEmpty())
-
-    h.add(56)
-    h.add(31)
-    h.add(2)
-    print("current size of heap: ", h.currentSize)
-
-    result = []
-    for i in range(3):
-        result.append(h.getAndRemoveSmallest())
-    print(result)
+    #
+    # h.add(56)
+    # h.add(31)
+    # h.add(2)
+    # print("current size of heap: ", h.currentSize)
+    #
+    # result = []
+    # for i in range(3):
+    #     result.append(h.getAndRemoveSmallest())
+    # print(result)
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
