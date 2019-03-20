@@ -3,7 +3,6 @@ from HeapIsEmptyException import HeapIsEmptyException
 
 from typing import List
 import unittest
-import random
 import math
 
 
@@ -17,8 +16,8 @@ class Node:
 
 class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self, initialElements: List):
-        self.root = None
-        self.currentSize = 0
+        self._root = None
+        self._currentSize = 0
         for element in initialElements:
             self.add(element)
 
@@ -28,18 +27,18 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self._moveNodeUp(newNode)
 
     def isHeapEmpty(self) -> bool:
-        return self.currentSize == 0
+        return self._currentSize == 0
 
     def getAndRemoveSmallest(self) -> int:
         if self.isHeapEmpty():
             raise HeapIsEmptyException("Heap empty - cannot return data")
 
-        oldRoot: Node = self.root
+        oldRoot: Node = self._root
 
-        if not self.root.right and not self.root.left:
-            assert self.currentSize == 1
-            self.root = None
-            self.currentSize -= 1
+        if not self._root.right and not self._root.left:
+            assert self._currentSize == 1
+            self._root = None
+            self._currentSize -= 1
             return oldRoot.value
 
         newRoot = self._getLastChild()
@@ -50,25 +49,25 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             newRoot.parent.left = None
         newRoot.parent = None
 
-        self.root = newRoot
+        self._root = newRoot
 
         if oldRoot.right:
-            oldRoot.right.parent = self.root
-        self.root.right = oldRoot.right
+            oldRoot.right.parent = self._root
+        self._root.right = oldRoot.right
 
         if oldRoot.left:
-            oldRoot.left.parent = self.root
-        self.root.left = oldRoot.left
+            oldRoot.left.parent = self._root
+        self._root.left = oldRoot.left
 
-        self.currentSize -= 1
+        self._currentSize -= 1
         self._moveNodeDown(newRoot)
         return oldRoot.value
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
-        self.currentSize += 1
+        self._currentSize += 1
 
-        if not self.root:
-            self.root = newNode
+        if not self._root:
+            self._root = newNode
         else:
             parentNode: Node = self._getLastChild()
 
@@ -80,14 +79,13 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             newNode.parent = parentNode
 
     def _getLastChild(self) -> Node:
-        currentNode: Node = self.root
-        currentLayerCapacity: int = int(self.getLayerCapacity())
-        #print("currentLayerCapacity: ", currentLayerCapacity)
-        lastChildPositionInBinary = bin(self.currentSize - currentLayerCapacity)
+        currentNode: Node = self._root
+        currentLayerCapacity: int = int(self._getLayerCapacity())
+        lastChildPositionInBinary = bin(self._currentSize - currentLayerCapacity)
 
         pathLength: int = int(math.log(currentLayerCapacity, 2))
+        pathString: str = self._addPaddingZeroes(lastChildPositionInBinary[2:], pathLength)  # remove leading "0b"
 
-        pathString: str = self._addPaddingZeroes(lastChildPositionInBinary[2:], pathLength)
         for char in pathString:
             if char == "0":
                 if currentNode.left:
@@ -95,12 +93,15 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             elif char == "1":
                 if currentNode.right:
                     currentNode = currentNode.right
-        #print(currentNode.value)
         return currentNode
 
-    def _addPaddingZeroes(self, lastChildPositionInBinary, pathLength):
-        return lastChildPositionInBinary.zfill(pathLength)
-
+    def _getLayerCapacity(self) -> int:
+        currentLayerCapacity = 0
+        i = 0
+        while math.pow(2, i) <= self._currentSize:
+            currentLayerCapacity = math.pow(2, i)
+            i += 1
+        return currentLayerCapacity
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
@@ -119,9 +120,9 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self._notDirectionDependentSwap(childNode, parentNode)
 
     def _notDirectionDependentSwap(self, childNode: Node, parentNode: Node) -> None:
-        if parentNode is self.root:
-            self.root = childNode
-            self.root.parent = None
+        if parentNode is self._root:
+            self._root = childNode
+            self._root.parent = None
         else:
             childNode.parent = parentNode.parent
             if parentNode.parent.left is parentNode:
@@ -158,125 +159,70 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             parentNode.right = childNode.right
             childNode.right = parentNode
 
-    def getLayerCapacity(self) -> int:
-        currentLayerCapacity = 0
-        i = 0
-        while math.pow(2, i) <= self.currentSize:
-            currentLayerCapacity = math.pow(2, i)
-            i += 1
-        return currentLayerCapacity
-
-    def printUpToThreeLayersOfTreeWithParents(self) -> None:
-        if self.isHeapEmpty():
-            raise HeapIsEmptyException("Heap empty - cannot print tree")
-
-        print("...")
-        if self.root.right:
-            if self.root.right.right:
-                print("  " + "root.right.right: ", self.root.right.right.value)
-                print("  " + "root.right.right.parent: ", self.root.right.right.parent.value)
-            if self.root.right.left:
-                print("  " + "root.right.left: ", self.root.right.left.value)
-                print("  " + "root.right.left.parent: ", self.root.right.left.parent.value)
-
-            print(" " + "root.right: ", self.root.right.value)
-            print(" " + "root.right.parent: ", self.root.right.parent.value)
-
-        print("root: ", self.root.value)
-
-        if self.root.left:
-            print(" " + "root.left: ", self.root.left.value)
-            print(" " + "root.left.parent: ", self.root.left.parent.value)
-            if self.root.left.right:
-                print("  " + "root.left.right: ", self.root.left.right.value)
-                print("  " + "root.left.right.parent: ", self.root.left.right.parent.value)
-            if self.root.left.left:
-                print("  " + "root.left.left: ", self.root.left.left.value)
-                print("  " + "root.left.left.parent: ", self.root.left.left.parent.value)
-        print("...")
-
-
-def main():
-    initialElements: List = [random.randrange(1000) for _ in range(7)]
-    h = BinaryTreeWithNodesBasedHeap(initialElements)
-
-    h.printUpToThreeLayersOfTreeWithParents()
-
-    result = []
-    for i in range(7):
-        #h.printUpToThreeLayersOfTreeWithParents()
-        result.append(h.getAndRemoveSmallest())
-
-    print(result == sorted(initialElements))
-    print("current size of heap: ", h.currentSize)
-    print("Heap is empty: ", h.isHeapEmpty())
-    #
-    # h.add(56)
-    # h.add(31)
-    # h.add(2)
-    # print("current size of heap: ", h.currentSize)
-    #
-    # result = []
-    # for i in range(3):
-    #     result.append(h.getAndRemoveSmallest())
-    # print(result)
+    @staticmethod
+    def _addPaddingZeroes(stringToFillUp: str, desiredLength: int) -> str:
+        return stringToFillUp.zfill(desiredLength)
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
-    def test_add_zeroInitialElement_insertThreeNodesInOrder(self):
-        h = BinaryTreeWithNodesBasedHeap([1, 2, 3])
+    def test_createEmptyHeap_heapIsEmpty(self):
+        h = BinaryTreeWithNodesBasedHeap([])
 
-        self.assertTrue(h.root.value == 1 and h.root.left.value == 2 and h.root.right.value == 3)
+        self.assertTrue(h.isHeapEmpty())
 
-    def test_add_zeroInitialElement_insertThreeNodesRandom_rootSwap(self):
-        h = BinaryTreeWithNodesBasedHeap([3, 2, 1])
+    def test_addOneElement_getAndRemoveSmallest_heapIsNotEmptyAfterInsertion_heapIsEmpty(self):
+        h = BinaryTreeWithNodesBasedHeap([])
+        h.add(2)
+        isHeapEmptyAfterInsertion = h.isHeapEmpty()
+        h.getAndRemoveSmallest()
 
-        self.assertTrue(h.root.value == 1 and h.root.left.value == 3 and h.root.right.value == 2 and h.root.right.parent.value == 1)
+        self.assertTrue(not isHeapEmptyAfterInsertion and h.isHeapEmpty())
 
-    def test_add_fourInitialElements_insertThreeNodesRandom_rootSwap(self):
-        h = BinaryTreeWithNodesBasedHeap([9, 3, 6, 8])
-        h.add(4)
+    def test_addOneElement_getAndRemoveSmallest_insertedElementIsReturned(self):
+        h = BinaryTreeWithNodesBasedHeap([])
+        elementToAdd: int = 4
+        h.add(elementToAdd)
+        elementRemovedValue: int = h.getAndRemoveSmallest()
+
+        self.assertTrue(elementToAdd == elementRemovedValue)
+
+    def test_addTwoElementsInOrder_getAndRemoveSmallestTwice_heapIsEmpty(self):
+        h = BinaryTreeWithNodesBasedHeap([])
         h.add(1)
-        h.add(7)
+        h.add(2)
+        h.getAndRemoveSmallest()
+        h.getAndRemoveSmallest()
 
-        self.assertTrue(h.root.value == 1, h.root.left.value == 4 and h.root.right.value == 3 and h.root.left.parent.value == 1)
+        self.assertTrue(h.isHeapEmpty())
 
-    def test_getAndRemoveSmallest_oneInitialElement_heapBecomesEmpty(self):
-        h = BinaryTreeWithNodesBasedHeap([2])
-        self.assertTrue(h.getAndRemoveSmallest() == 2 and h.isHeapEmpty() and h.currentSize == 0)
+    def test_addTwoElementsNotInOrder_getAndRemoveSmallestTwice_ascendingRemovedValues(self):
+        h = BinaryTreeWithNodesBasedHeap([])
+        h.add(2)
+        h.add(1)
+        removedValues: List = [h.getAndRemoveSmallest(), h.getAndRemoveSmallest()]
 
-    def test_getAndRemoveSmallest_threeInitialElements_removeTwo_onlyRootRemains(self):
-        h = BinaryTreeWithNodesBasedHeap([3, 1, 2])
-        self.assertTrue(h.getAndRemoveSmallest() == 1 and h.getAndRemoveSmallest() == 2 and h.root.value == 3 and
-                        (not h.root.left and not h.root.right))
+        self.assertTrue(removedValues == [1, 2])
+
+    def test_addTwice_getAndRemoveSmallest_addSmallestNumber_getAndRemoveSmallest_smallestNumberReturned(self):
+        h = BinaryTreeWithNodesBasedHeap([])
+        h.add(9)
+        h.add(6)
+        h.getAndRemoveSmallest()
+
+        h.add(2)
+        smallestElementValue: int = h.getAndRemoveSmallest()
+
+        self.assertTrue(smallestElementValue == 2)
 
     def test_getAndRemoveSmallest_tenInitialElements_heapBecomesEmpty(self):
         initialElementsList: List = [9, 1, 7, 3, 5, 6, 4, 8, 2, 10]
         h = BinaryTreeWithNodesBasedHeap(initialElementsList)
 
-        result = []
+        result: List = []
         for _ in range(10):
             result.append(h.getAndRemoveSmallest())
 
         self.assertTrue(result == sorted(initialElementsList))
 
-    def test_getAndRemoveAddGetAndRemove_heapBecomesEmpty_notEmpty_emptyAgain(self):
-        h = BinaryTreeWithNodesBasedHeap([7, 2, 1])
-
-        firstRounRemovalValues: List = []
-        for i in range(3):
-            firstRounRemovalValues.append(h.getAndRemoveSmallest())
-
-        for i in range(5):
-            h.add(i)
-
-        secondRounRemovalValues: List = []
-        for i in range(5):
-            secondRounRemovalValues.append(h.getAndRemoveSmallest())
-
-        self.assertTrue(h.isHeapEmpty(), firstRounRemovalValues == [1, 2, 7] and secondRounRemovalValues == [1, 2, 3, 4, 5])
-
-
 if __name__ == '__main__':
-    #main()
     unittest.main()
