@@ -79,12 +79,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             newNode.parent = parentNode
 
     def _getLastChild(self) -> Node:
+        pathString = self._getPathToLastChild()
         currentNode: Node = self._root
-        currentLayerCapacity: int = int(self._getLayerCapacity())
-        lastChildPositionInBinary = bin(self._currentSize - currentLayerCapacity)
-
-        pathLength: int = int(math.log(currentLayerCapacity, 2))
-        pathString: str = self._addPaddingZeroes(lastChildPositionInBinary[2:], pathLength)  # remove leading "0b"
 
         for char in pathString:
             if char == "0":
@@ -95,13 +91,20 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                     currentNode = currentNode.right
         return currentNode
 
-    def _getLayerCapacity(self) -> int:
-        currentLayerCapacity = 0
+    def _getPathToLastChild(self) -> str:
+        currentLayerCapacity: int = int(self._getCurrentLayerCapacity())
+        lastChildPositionInLevelBinary: str = bin(self._currentSize - currentLayerCapacity)
+
+        currentDigitsInPathString: str = lastChildPositionInLevelBinary[2:]  # remove leading "0b"
+        pathLength: int = int(math.log(currentLayerCapacity, 2))
+
+        return currentDigitsInPathString.zfill(pathLength)
+
+    def _getCurrentLayerCapacity(self) -> int:
         i = 0
         while math.pow(2, i) <= self._currentSize:
-            currentLayerCapacity = math.pow(2, i)
             i += 1
-        return currentLayerCapacity
+        return int(math.pow(2, i - 1))
 
     def _moveNodeUp(self, node: Node) -> None:
         while node.parent and node.value < node.parent.value:
@@ -158,10 +161,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 childNode.right.parent = parentNode
             parentNode.right = childNode.right
             childNode.right = parentNode
-
-    @staticmethod
-    def _addPaddingZeroes(stringToFillUp: str, desiredLength: int) -> str:
-        return stringToFillUp.zfill(desiredLength)
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
