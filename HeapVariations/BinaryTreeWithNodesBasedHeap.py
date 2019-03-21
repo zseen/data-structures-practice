@@ -169,13 +169,19 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
 
         self.assertTrue(h.isHeapEmpty())
 
-    def test_addOneElement_getAndRemoveSmallest_heapIsNotEmptyAfterInsertion_heapIsEmpty(self):
+    def test_getAndRemoveSmallest_raiseHeapIsEmptyException(self):
+        h = BinaryTreeWithNodesBasedHeap([])
+
+        with self.assertRaises(HeapIsEmptyException):
+            h.getAndRemoveSmallest()
+
+    def test_addOneElement_getAndRemoveSmallest_heapIsEmpty(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(2)
-        isHeapEmptyAfterInsertion = h.isHeapEmpty()
-        h.getAndRemoveSmallest()
+        self.assertTrue(not h.isHeapEmpty())
 
-        self.assertTrue(not isHeapEmptyAfterInsertion and h.isHeapEmpty())
+        h.getAndRemoveSmallest()
+        self.assertTrue(h.isHeapEmpty())
 
     def test_addOneElement_getAndRemoveSmallest_insertedElementIsReturned(self):
         h = BinaryTreeWithNodesBasedHeap([])
@@ -183,26 +189,32 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         h.add(elementToAdd)
         elementRemovedValue: int = h.getAndRemoveSmallest()
 
-        self.assertTrue(elementToAdd == elementRemovedValue)
+        self.assertEqual(elementToAdd, elementRemovedValue)
 
-    def test_addTwoElementsInOrder_getAndRemoveSmallestTwice_heapIsEmpty(self):
+    def test_addTwoElementsInOrder_getAndRemoveSmallest_heapIsEmpty(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(1)
         h.add(2)
-        h.getAndRemoveSmallest()
-        h.getAndRemoveSmallest()
 
+        removedFirst: int = h.getAndRemoveSmallest()
+        removedSecond: int = h.getAndRemoveSmallest()
+
+        self.assertEqual(removedFirst, 1)
+        self.assertEqual(removedSecond, 2)
         self.assertTrue(h.isHeapEmpty())
 
-    def test_addTwoElementsNotInOrder_getAndRemoveSmallestTwice_ascendingRemovedValues(self):
+    def test_addTwoElementsNotInOrder_getAndRemoveSmallest_ascendingRemovedValues(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(2)
         h.add(1)
-        removedValues: List = [h.getAndRemoveSmallest(), h.getAndRemoveSmallest()]
 
-        self.assertTrue(removedValues == [1, 2])
+        removedFirst: int = h.getAndRemoveSmallest()
+        removedSecond: int = h.getAndRemoveSmallest()
 
-    def test_addTwice_getAndRemoveSmallest_addSmallestNumber_getAndRemoveSmallest_smallestNumberReturned(self):
+        self.assertEqual(removedFirst, 1)
+        self.assertEqual(removedSecond, 2)
+
+    def test_add_getAndRemoveSmallest_add_getAndRemoveSmallest_smallestNumberReturned(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(9)
         h.add(6)
@@ -211,9 +223,9 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         h.add(2)
         smallestElementValue: int = h.getAndRemoveSmallest()
 
-        self.assertTrue(smallestElementValue == 2)
+        self.assertEqual(smallestElementValue, 2)
 
-    def test_getAndRemoveSmallest_tenInitialElements_heapBecomesEmpty(self):
+    def test_getAndRemoveSmallest_sortedElementsReturned(self):
         initialElementsList: List = [9, 1, 7, 3, 5, 6, 4, 8, 2, 10]
         h = BinaryTreeWithNodesBasedHeap(initialElementsList)
 
