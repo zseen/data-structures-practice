@@ -71,7 +71,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         if not self.root:
             self.root = newNode
         else:
-            parentNode: Node = self.getLastChild()
+            parentNode: Node = self.findParentOfFirstMissingChild()
 
             if not parentNode.left:
                 parentNode.left = newNode
@@ -137,8 +137,52 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
         parentNode.parent = childNode
 
+    def isPreviousLevelFull(self):
+        return self._currentSize != 0 and ((self._currentSize & (self._currentSize - 1)) == 0)
+
     def findParentOfFirstMissingChild(self):
-       pass
+        currCap = self._getCurrentLayerCapacity()
+        prevCap = int(currCap / 2)
+        #lastChild = self.getLastChild()
+        #print("lc: ", lastChild.value)
+        #lastChildPositionInLevelBinary: str = bin(self._currentSize - currCap)
+
+        print("currCap: ", currCap)
+        lastLevelOffset = self._currentSize - 1 - currCap
+        print("llo: ", lastLevelOffset)
+        previousLevelOffset = math.floor((lastLevelOffset + 1) / 2)
+        print("plo: ", previousLevelOffset)
+
+        print("currSize: ", self._currentSize)
+        print("...")
+
+        if self.isPreviousLevelFull():
+            pathString = "0" * prevCap
+            currentNode = self.root
+            for _ in range(len(pathString)):
+                if currentNode.left:
+                    currentNode = currentNode.left
+            return currentNode
+
+        lastChildPositionInLevelBinary: str = bin(int(prevCap + previousLevelOffset))
+
+        lastChildPositionInLevelBinaryStripped = lastChildPositionInLevelBinary[3:]  # remove leading "0b"
+        pathLength: int = int(math.log(prevCap, 2))
+
+        lastChildPositionInLevelBinaryStripped = lastChildPositionInLevelBinaryStripped.zfill(pathLength)
+
+        #parentNodePath = bin(previousLevelOffset)
+
+        currentNode = self.root
+        for char in lastChildPositionInLevelBinaryStripped:
+            if char == "0":
+                if currentNode.left:
+                    currentNode = currentNode.left
+            elif char == "1":
+                if currentNode.right:
+                    currentNode = currentNode.right
+        return currentNode
+
 
     @staticmethod
     def _directionDependentSwap(childNode: Node, parentNode: Node) -> None:
@@ -180,8 +224,9 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
 
 def main():
-    h = BinaryTreeWithNodesBasedHeap([1, 2, 3, 4])
+    h = BinaryTreeWithNodesBasedHeap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
     h.printTree()
+    #h.findParentOfFirstMissingChild()
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
