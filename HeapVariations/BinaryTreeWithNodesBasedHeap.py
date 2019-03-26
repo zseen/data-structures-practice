@@ -163,10 +163,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
         parentNode.parent = childNode
 
-
-
-
-
     @staticmethod
     def _directionDependentSwap(childNode: Node, parentNode: Node) -> None:
         if parentNode.left is childNode:
@@ -228,7 +224,7 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         with self.assertRaises(HeapIsEmptyException):
             h.getAndRemoveSmallest()
 
-    def test_addOneElement_getAndRemoveSmallest_heapIsEmpty(self):
+    def test_add_getAndRemoveSmallest_heapIsEmpty(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(2)
         self.assertFalse(h.isHeapEmpty())
