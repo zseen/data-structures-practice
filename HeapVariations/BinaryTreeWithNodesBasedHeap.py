@@ -36,24 +36,27 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
         oldRoot: Node = self.root
 
+        print("currSize: ", self._currentSize)
+
         if not self.root.right and not self.root.left:
+            #print(self._currentSize)
             assert self._currentSize == 1
             self.root = None
             self._currentSize -= 1
             return oldRoot.value
 
         newRoot = self._getLastChild()
-        self._swapWithRoot(newRoot, oldRoot)
+        self._swapWithRoot(newRoot)
 
         self._currentSize -= 1
         self._moveNodeDown(newRoot)
         return oldRoot.value
 
     def _getLastChild(self) -> Node:
-        currentLayerCapacity: int = int(self._getCurrentLayerCapacity())
-        lastChildPositionInLevelBinary: str = bin(self._currentSize - currentLayerCapacity)
+        currentLevelCapacity: int = int(self._getCurrentLevelCapacity())
+        lastChildPositionInLevelBinary: str = bin(self._currentSize - currentLevelCapacity)
 
-        pathToLastChild = self._generatePath(currentLayerCapacity, lastChildPositionInLevelBinary)
+        pathToLastChild = self._generatePath(currentLevelCapacity, lastChildPositionInLevelBinary)
         return self._getLastNodeInPath(pathToLastChild)
 
     def _generatePath(self, levelCapacity, nodePositionInBinary) -> str:
@@ -75,26 +78,26 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                     currentNode = currentNode.right
         return currentNode
 
-    def _swapWithRoot(self, newRoot, oldRoot) -> None:
+    def _swapWithRoot(self, newRoot) -> None:
         if newRoot.parent.right is newRoot:
             newRoot.parent.right = None
         else:
             newRoot.parent.left = None
         newRoot.parent = None
 
+        if self.root.right:
+            self.root.right.parent = newRoot
+        newRoot.right = self.root.right
+
+        if self.root.left:
+            self.root.left.parent = newRoot
+        newRoot.left = self.root.left
+
         self.root = newRoot
 
-        if oldRoot.right:
-            oldRoot.right.parent = self.root
-        self.root.right = oldRoot.right
-
-        if oldRoot.left:
-            oldRoot.left.parent = self.root
-        self.root.left = oldRoot.left
-
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
+        #print("currSize: ", self._currentSize)
         self._currentSize += 1
-
         if not self.root:
             self.root = newNode
         else:
@@ -107,28 +110,41 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
             newNode.parent = parentNode
 
+
+        #print("currSize: ", self._currentSize)
+        #print("---")
+
     def _findParentOfFirstMissingChild(self) -> Node:
-        currentLevelCapacity: int = self._getCurrentLayerCapacity()
+        currentLevelCapacity: int = self._getCurrentLevelCapacity()
         previousLevelCapacity: int = int(currentLevelCapacity / 2)
 
         if self._isCurrentLevelFull():
             pathString: str = "0" * previousLevelCapacity
             return self._getLastNodeInPath(pathString)
 
-        lastLevelOffset: int = self._currentSize - 1 - currentLevelCapacity  # -1, as the currentSize is the already increased value
-        previousLevelOffset: int = int(math.floor((lastLevelOffset + 1) / 2))
+        lastChildOffsetInLevel: int = self._currentSize - 1 - currentLevelCapacity  # -1, as the currentSize is the already increased value
+        previousLevelOffset: int = int(math.floor((lastChildOffsetInLevel + 1) / 2))
 
-        pathToParent: str = self._getPathToParentOfFirstMissingChild(previousLevelCapacity, previousLevelOffset)
+        parentPositionInLevelBinary: str = bin(int(previousLevelOffset))
+        pathToParent = self._generatePath(previousLevelCapacity, parentPositionInLevelBinary)
         return self._getLastNodeInPath(pathToParent)
 
-    def _getPathToParentOfFirstMissingChild(self, previousLevelCapacity: int, previousLevelOffset: int) -> str:
-        parentPositionInLevelBinary: str = bin(int(previousLevelOffset))
-        return self._generatePath(previousLevelCapacity, parentPositionInLevelBinary)
+    def _isCurrentLevelFull(self):
+        if self._currentSize == 1:
+            return True
 
-    def _isCurrentLevelFull(self) -> bool:
-        return (self._currentSize & (self._currentSize - 1)) == 0
+        if self._currentSize == 2:
+            return False
 
-    def _getCurrentLayerCapacity(self) -> int:
+        originalSize = self._currentSize
+        while originalSize > 1:
+            if originalSize % 2 != 0:
+                return False
+            originalSize /= 2
+        return True
+
+
+    def _getCurrentLevelCapacity(self) -> int:
         i = 0
         while math.pow(2, i) <= self._currentSize:
             i += 1
@@ -205,9 +221,14 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 def main():
     initialElements: List = [random.randrange(10000) for _ in range(1000)]
     h = BinaryTreeWithNodesBasedHeap(initialElements)
+    h.printTree()
     r = []
     for _ in range(1000):
+        #h.printTree()
         r.append(h.getAndRemoveSmallest())
+
+    print(r)
+    #h.printTree()
     print(r == sorted(initialElements))
 
 
