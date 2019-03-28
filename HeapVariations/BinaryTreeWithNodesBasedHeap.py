@@ -4,7 +4,6 @@ from HeapIsEmptyException import HeapIsEmptyException
 from typing import List
 import unittest
 import math
-import random
 
 
 class Node:
@@ -36,10 +35,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
         oldRoot: Node = self.root
 
-        print("currSize: ", self._currentSize)
-
         if not self.root.right and not self.root.left:
-            #print(self._currentSize)
             assert self._currentSize == 1
             self.root = None
             self._currentSize -= 1
@@ -63,6 +59,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         path: str = nodePositionInBinary[2:]  # remove the leading "0b"
         pathLength: int = int(math.log2(levelCapacity))
         path = path.zfill(pathLength)
+
+        # if the node to insert is root.right, the pathLength is 0, so a path to the parent (root) does not exist
         if pathLength == 0:
             path = ""
         return path
@@ -96,8 +94,6 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self.root = newRoot
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
-        #print("currSize: ", self._currentSize)
-        self._currentSize += 1
         if not self.root:
             self.root = newNode
         else:
@@ -109,10 +105,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 parentNode.right = newNode
 
             newNode.parent = parentNode
-
-
-        #print("currSize: ", self._currentSize)
-        #print("---")
+        self._currentSize += 1
 
     def _findParentOfFirstMissingChild(self) -> Node:
         currentLevelCapacity: int = self._getCurrentLevelCapacity()
@@ -122,7 +115,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             pathString: str = "0" * previousLevelCapacity
             return self._getLastNodeInPath(pathString)
 
-        lastChildOffsetInLevel: int = self._currentSize - 1 - currentLevelCapacity  # -1, as the currentSize is the already increased value
+        lastChildOffsetInLevel: int = self._currentSize - currentLevelCapacity
         previousLevelOffset: int = int(math.floor((lastChildOffsetInLevel + 1) / 2))
 
         parentPositionInLevelBinary: str = bin(int(previousLevelOffset))
@@ -136,13 +129,12 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         if self._currentSize == 2:
             return False
 
-        originalSize = self._currentSize
-        while originalSize > 1:
-            if originalSize % 2 != 0:
+        nodeToAddPosition = self._currentSize + 1
+        while nodeToAddPosition > 1:
+            if nodeToAddPosition % 2 != 0:
                 return False
-            originalSize /= 2
+            nodeToAddPosition /= 2
         return True
-
 
     def _getCurrentLevelCapacity(self) -> int:
         i = 0
@@ -207,30 +199,14 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             childNode.right = parentNode
 
     def printTree(self):
-        level = 0
         if self.root:
-            self._printTree(self.root, level)
+            self._printTreeRecursive(self.root, 0)
 
-    def _printTree(self, node, level):
+    def _printTreeRecursive(self, node, level):
         if node:
-            self._printTree(node.right, level + 1)
+            self._printTreeRecursive(node.right, level + 1)
             print('  ' * level + str(node.value))
-            self._printTree(node.left, level + 1)
-
-
-def main():
-    initialElements: List = [random.randrange(10000) for _ in range(1000)]
-    h = BinaryTreeWithNodesBasedHeap(initialElements)
-    h.printTree()
-    r = []
-    for _ in range(1000):
-        #h.printTree()
-        r.append(h.getAndRemoveSmallest())
-
-    print(r)
-    #h.printTree()
-    print(r == sorted(initialElements))
-
+            self._printTreeRecursive(node.left, level + 1)
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
@@ -245,7 +221,7 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         with self.assertRaises(HeapIsEmptyException):
             h.getAndRemoveSmallest()
 
-    def test_add_getAndRemoveSmallest_heapIsEmpty(self):
+    def test_addAndGet_heapIsEmpty(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(2)
         self.assertFalse(h.isHeapEmpty())
@@ -253,47 +229,53 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         h.getAndRemoveSmallest()
         self.assertTrue(h.isHeapEmpty())
 
-    def test_add_getAndRemoveSmallest_insertedElementIsReturned(self):
+    def test_addAndGet_insertedElementIsReturned(self):
         h = BinaryTreeWithNodesBasedHeap([])
         elementToAdd: int = 4
         h.add(elementToAdd)
         elementRemovedValue: int = h.getAndRemoveSmallest()
 
         self.assertEqual(elementToAdd, elementRemovedValue)
+        self.assertTrue(h.isHeapEmpty())
 
-    def test_addTwoElementsInOrder_getAndRemoveSmallest_heapIsEmpty(self):
+    def test_addTwoElementsInOrderGetAndRemoveSmallest_heapIsEmpty(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(1)
         h.add(2)
 
         removedFirst: int = h.getAndRemoveSmallest()
         self.assertEqual(removedFirst, 1)
+        self.assertFalse(h.isHeapEmpty())
 
         removedSecond: int = h.getAndRemoveSmallest()
         self.assertEqual(removedSecond, 2)
         self.assertTrue(h.isHeapEmpty())
 
-    def test_addTwoElementsNotInOrder_getAndRemoveSmallest_ascendingRemovedValues(self):
+    def test_addTwoElementsNotInOrderGetAndRemoveSmallest_ascendingRemovedValues(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(2)
         h.add(1)
 
         removedFirst: int = h.getAndRemoveSmallest()
         self.assertEqual(removedFirst, 1)
+        self.assertFalse(h.isHeapEmpty())
 
         removedSecond: int = h.getAndRemoveSmallest()
         self.assertEqual(removedSecond, 2)
+        self.assertTrue(h.isHeapEmpty())
 
-    def test_add_getAndRemoveSmallest_add_getAndRemoveSmallest_smallestNumberReturned(self):
+    def test_addAndGetRepeatedly_smallestNumberReturned(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(9)
         h.add(6)
         h.getAndRemoveSmallest()
+        self.assertFalse(h.isHeapEmpty())
 
         h.add(2)
         smallestElementValue: int = h.getAndRemoveSmallest()
 
         self.assertEqual(smallestElementValue, 2)
+        self.assertFalse(h.isHeapEmpty())
 
     def test_getAndRemoveSmallest_sortedElementsReturned(self):
         initialElementsList: List = [9, 1, 7, 3, 5, 6, 4, 8, 2, 10]
@@ -304,7 +286,7 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
             result.append(h.getAndRemoveSmallest())
 
         self.assertTrue(result == sorted(initialElementsList))
+        self.assertTrue(h.isHeapEmpty())
 
 if __name__ == '__main__':
-    #unittest.main()
-    main()
+    unittest.main()

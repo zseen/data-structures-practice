@@ -51,7 +51,7 @@ def main():
     initialElements: List = [random.randrange(INITIAL_ELEMENTS_VALUES_RANGE) for _ in range(INITIAL_ELEMENTS_NUM)]
     benchmarkHeapImplementation(SimpleArrayBasedHeap(initialElements))  # 11.211
     benchmarkHeapImplementation(BinaryTreeInArrayBasedHeap(initialElements))  # 1.2617
-    benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))  # 3.1434
+    benchmarkHeapImplementation(BinaryTreeWithNodesBasedHeap(initialElements))  # 3.1434 -> 5.914
     benchmarkHeapImplementation(DefaultPythonHeap(initialElements))  # 0.772
 
 
