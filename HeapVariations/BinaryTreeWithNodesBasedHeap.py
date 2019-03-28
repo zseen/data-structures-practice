@@ -16,7 +16,7 @@ class Node:
 
 class BinaryTreeWithNodesBasedHeap(IHeap):
     def __init__(self, initialElements: List):
-        self.root = None
+        self._root = None
         self._currentSize = 0
         for element in initialElements:
             self.add(element)
@@ -33,11 +33,11 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         if self.isHeapEmpty():
             raise HeapIsEmptyException("Heap empty - cannot return data")
 
-        oldRoot: Node = self.root
+        oldRoot: Node = self._root
 
-        if not self.root.right and not self.root.left:
+        if not self._root.right and not self._root.left:
             assert self._currentSize == 1
-            self.root = None
+            self._root = None
             self._currentSize -= 1
             return oldRoot.value
 
@@ -66,7 +66,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         return path
 
     def _getLastNodeInPath(self, pathString: str) -> Node:
-        currentNode: Node = self.root
+        currentNode: Node = self._root
         for char in pathString:
             if char == "0":
                 if currentNode.left:
@@ -83,19 +83,19 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             newRoot.parent.left = None
         newRoot.parent = None
 
-        if self.root.right:
-            self.root.right.parent = newRoot
-        newRoot.right = self.root.right
+        if self._root.right:
+            self._root.right.parent = newRoot
+        newRoot.right = self._root.right
 
-        if self.root.left:
-            self.root.left.parent = newRoot
-        newRoot.left = self.root.left
+        if self._root.left:
+            self._root.left.parent = newRoot
+        newRoot.left = self._root.left
 
-        self.root = newRoot
+        self._root = newRoot
 
     def _insertNodeAtInitialPosition(self, newNode: Node) -> None:
-        if not self.root:
-            self.root = newNode
+        if not self._root:
+            self._root = newNode
         else:
             parentNode: Node = self._findParentOfFirstMissingChild()
 
@@ -159,9 +159,9 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         self._notDirectionDependentSwap(childNode, parentNode)
 
     def _notDirectionDependentSwap(self, childNode: Node, parentNode: Node) -> None:
-        if parentNode is self.root:
-            self.root = childNode
-            self.root.parent = None
+        if parentNode is self._root:
+            self._root = childNode
+            self._root.parent = None
         else:
             childNode.parent = parentNode.parent
             if parentNode.parent.left is parentNode:
@@ -199,8 +199,8 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             childNode.right = parentNode
 
     def printTree(self):
-        if self.root:
-            self._printTreeRecursive(self.root, 0)
+        if self._root:
+            self._printTreeRecursive(self._root, 0)
 
     def _printTreeRecursive(self, node, level):
         if node:
