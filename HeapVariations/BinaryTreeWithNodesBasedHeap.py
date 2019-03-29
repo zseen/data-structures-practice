@@ -46,6 +46,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
 
         self._currentSize -= 1
         self._moveNodeDown(newRoot)
+
         return oldRoot.value
 
     def _getLastChild(self) -> Node:
@@ -56,13 +57,16 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         return self._getLastNodeInPath(pathToLastChild)
 
     def _generatePath(self, levelCapacity, nodePositionInBinary) -> str:
-        path: str = nodePositionInBinary[2:]  # remove the leading "0b"
         pathLength: int = int(math.log2(levelCapacity))
-        path = path.zfill(pathLength)
 
-        # if the node to insert is root.right, the pathLength is 0, so a path to the parent (root) does not exist
+        # if pathLenght is 0, the path is "0", but it should be empty instead as the root is the start and end of the path
         if pathLength == 0:
             path = ""
+            return path
+
+        path: str = nodePositionInBinary[2:]  # remove the leading "0b"
+        path = path.zfill(pathLength)
+
         return path
 
     def _getLastNodeInPath(self, pathString: str) -> Node:
@@ -115,21 +119,17 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
             pathString: str = "0" * previousLevelCapacity
             return self._getLastNodeInPath(pathString)
 
-        lastChildOffsetInLevel: int = self._currentSize - currentLevelCapacity
-        previousLevelOffset: int = int(math.floor((lastChildOffsetInLevel + 1) / 2))
+        lastChildPositionsInLevel: int = self._currentSize - currentLevelCapacity
+        parentPositionInPreviousLevel: int = int(math.floor((lastChildPositionsInLevel + 1) / 2))
 
-        parentPositionInLevelBinary: str = bin(int(previousLevelOffset))
+        parentPositionInLevelBinary: str = bin(int(parentPositionInPreviousLevel))
         pathToParent = self._generatePath(previousLevelCapacity, parentPositionInLevelBinary)
         return self._getLastNodeInPath(pathToParent)
 
     def _isCurrentLevelFull(self):
-        if self._currentSize == 1:
-            return True
+        return self._isPowerOfTwo(self._currentSize + 1)
 
-        if self._currentSize == 2:
-            return False
-
-        nodeToAddPosition = self._currentSize + 1
+    def _isPowerOfTwo(self, nodeToAddPosition):
         while nodeToAddPosition > 1:
             if nodeToAddPosition % 2 != 0:
                 return False
@@ -202,11 +202,12 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
         if self._root:
             self._printTreeRecursive(self._root, 0)
 
-    def _printTreeRecursive(self, node, level):
+    @staticmethod
+    def _printTreeRecursive(node, level):
         if node:
-            self._printTreeRecursive(node.right, level + 1)
+            BinaryTreeWithNodesBasedHeap._printTreeRecursive(node.right, level + 1)
             print('  ' * level + str(node.value))
-            self._printTreeRecursive(node.left, level + 1)
+            BinaryTreeWithNodesBasedHeap._printTreeRecursive(node.left, level + 1)
 
 
 class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
@@ -238,7 +239,7 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         self.assertEqual(elementToAdd, elementRemovedValue)
         self.assertTrue(h.isHeapEmpty())
 
-    def test_addTwoElementsInOrderGetAndRemoveSmallest_heapIsEmpty(self):
+    def test_addTwoElementsInOrderGetAndRemoveSmallest_ascendingRemovedValues(self):
         h = BinaryTreeWithNodesBasedHeap([])
         h.add(1)
         h.add(2)
@@ -277,7 +278,7 @@ class InsertionAndRemovingSmallestElementTester(unittest.TestCase):
         self.assertEqual(smallestElementValue, 2)
         self.assertFalse(h.isHeapEmpty())
 
-    def test_getAndRemoveSmallest_sortedElementsReturned(self):
+    def test_getAndRemoveSmallest_initializedWithList(self):
         initialElementsList: List = [9, 1, 7, 3, 5, 6, 4, 8, 2, 10]
         h = BinaryTreeWithNodesBasedHeap(initialElementsList)
 
