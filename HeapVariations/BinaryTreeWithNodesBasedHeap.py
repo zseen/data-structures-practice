@@ -108,6 +108,7 @@ class BinaryTreeWithNodesBasedHeap(IHeap):
                 parentNode.right = newNode
 
             newNode.parent = parentNode
+            
         self._currentSize += 1
 
     def _findParentOfFirstMissingChild(self) -> Node:
