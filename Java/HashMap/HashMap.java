@@ -3,9 +3,10 @@ public class HashMap {
 	
 	public static Node[] hashTable = new Node[hashSize];
 	
-	public static void insertItemIntoHashTable(Node currentNode.word)
+	public static void insertItemIntoHashTable(String word)
 	{
 		int index = getHashedValue(word);
+		Node currentNode = createNode(word)
 		
 		if (hashTable[index] == null)
 		{
