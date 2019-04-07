@@ -6,7 +6,8 @@ public class HashMap {
 	public static void insertItemIntoHashTable(String word)
 	{
 		int index = getHashedValue(word);
-		Node currentNode = createNode(word)
+		Node currentNode = new Node();
+		currentNode.word = word;
 		
 		if (hashTable[index] == null)
 		{
@@ -22,13 +23,28 @@ public class HashMap {
 			sum += word.charAt(i);
 		}
 		
-		return sum % hashSize;
+		return sum % hashSize;	
+	}
+	
+	public static boolean isWordInHashTable(String word)
+	{
+		int index = getHashedValue(word);
 		
+		if (hashTable[index] == null)
+		{
+			return false;
+		}
+		
+		return true;
 	}
 	
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		HashMap h = new HashMap();
+		insertItemIntoHashTable("cat");
+		System.out.println(isWordInHashTable("dog"));
+		System.out.println(isWordInHashTable("cat"));
+		
 
 	}
 
