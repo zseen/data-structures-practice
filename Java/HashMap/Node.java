@@ -1,6 +1,6 @@
-
 public class Node 
 {
-	public String word;
+	String word;
+	int number;
 	public Node next;
 }

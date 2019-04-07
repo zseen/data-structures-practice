@@ -3,14 +3,21 @@ public class HashMap {
 	
 	public static Node[] hashTable = new Node[hashSize];
 	
-	public static void insertItemIntoHashTable(String word)
+	public static void insertItemIntoHashTable(String word, int number)
 	{
 		int index = getHashedValue(word);
 		Node currentNode = new Node();
 		currentNode.word = word;
+		currentNode.number = number;
+		
 		
 		if (hashTable[index] == null)
 		{
+			hashTable[index] = currentNode;
+		}
+		else
+		{
+			currentNode.next = hashTable[index];
 			hashTable[index] = currentNode;
 		}
 	}
@@ -34,18 +41,38 @@ public class HashMap {
 		{
 			return false;
 		}
-		
-		return true;
+		else
+		{
+			Node currNode = hashTable[index];
+			while (currNode != null)
+			{
+				if (currNode.word == word)
+				{
+					return true;
+				}
+			
+				currNode = currNode.next;
+			}
+		}
+		return false;
+	}
+	
+	public static int getValue(String key)
+	{
+		return 0;
 	}
 	
 
 	public static void main(String[] args) {
-		HashMap h = new HashMap();
-		insertItemIntoHashTable("cat");
-		System.out.println(isWordInHashTable("dog"));
+		insertItemIntoHashTable("tac", 2);
+		insertItemIntoHashTable("cat", 3);
+		System.out.println(isWordInHashTable("tac"));
 		System.out.println(isWordInHashTable("cat"));
+		System.out.println(isWordInHashTable("act"));
+		
 		
 
 	}
 
 }
+
