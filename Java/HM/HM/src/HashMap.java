@@ -56,22 +56,29 @@ public class HashMap
 		}
 	}
 	
-	public static int get(String key)
+	public static Integer get(String key)
 	{
-		int index = getHashedKey(key);
-		
-		Node currentNode = hashTable[index];	
-		while (currentNode != null)
+		if (!isKeyInHashTable(key))
 		{
-			if (currentNode.word == key)
-			{
-				return currentNode.number;
-			}
+			return null;
+		}
+		else
+		{
+			int index = getHashedKey(key);
 			
-			currentNode = currentNode.next;
+			Node currentNode = hashTable[index];	
+			while (currentNode != null)
+			{
+				if (currentNode.word == key)
+				{
+					return currentNode.number;
+				}
+				
+				currentNode = currentNode.next;
+			}
 		}
 		
-		return 0;	
+		return null;
 	}
 	
 
@@ -80,9 +87,6 @@ public class HashMap
 		add("tac", 2);
 		add("cat", 3);
 		add("dog", 4);
-		System.out.println(isKeyInHashTable("tac"));
-		System.out.println(isKeyInHashTable("cat"));
-		System.out.println(isKeyInHashTable("act"));
 		System.out.println(get("cat"));
 		System.out.println(get("c"));
 	}
