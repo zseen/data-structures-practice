@@ -1,1 +1,14 @@
-/bin/
+# Java
+
+.metadata/
+.classpath
+*.class
+.project
+.prefs
+.settings
+
+# Python
+
+.idea
+__pycache__/
+*.pyc
