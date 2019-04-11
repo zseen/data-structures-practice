@@ -2,9 +2,9 @@ public class HashMap
 {
     private static final int hashSize = 100;
 
-    private static Node[] hashTable = new Node[hashSize];
+    private Node[] hashTable = new Node[hashSize];
 
-    public static void add(String key, int value)
+    public void add(String key, int value)
     {
         int index = getHashedKey(key);
         Node currentNode = Node.createNode(key, value);
@@ -20,28 +20,21 @@ public class HashMap
         }
     }
 
-    public static Integer get(String key)
+    public Integer get(String key)
     {
-        if (!isKeyInHashTable(key))
-        {
-            return null;
-        }
-        else
-        {
-            int index = getHashedKey(key);
+		int index = getHashedKey(key);
 
-            Node currentNode = hashTable[index];
-            while (currentNode != null)
-            {
-                if (currentNode.word == key)
-                {
-                    return currentNode.number;
-                }
+		Node currentNode = hashTable[index];
+		while (currentNode != null)
+		{
+			if (currentNode.word == key)
+			{
+				return currentNode.number;
+			}
 
-                currentNode = currentNode.next;
-            }
-        }
-
+			currentNode = currentNode.next;
+		}
+        
         return null;
     }
 
@@ -56,38 +49,14 @@ public class HashMap
         return sum % hashSize;
     }
 
-    private static boolean isKeyInHashTable(String key)
-    {
-        int index = getHashedKey(key);
-
-        if (hashTable[index] == null)
-        {
-            return false;
-        }
-        else
-        {
-            Node currentNode = hashTable[index];
-            while (currentNode != null)
-            {
-                if (currentNode.word == key)
-                {
-                    return true;
-                }
-
-                currentNode = currentNode.next;
-            }
-
-            return false;
-        }
-    }
-
     public static void main(String[] args)
     {
-        add("tac", 2);
-        add("cat", 3);
-        add("dog", 4);
-        System.out.println(get("cat"));
-        System.out.println(get("c"));
+    	HashMap hm = new HashMap();
+        hm.add("tac", 2);
+        hm.add("cat", 3);
+        hm.add("dog", 4);
+        System.out.println(hm.get("cat"));
+        System.out.println(hm.get("c"));
     }
 }
 
