@@ -38,7 +38,7 @@ public class HashMap
         return null;
     }
 
-    private static int getHashedKey(String word)
+    private int getHashedKey(String word)
     {
         int sum = 0;
         for (int i = 0; i < word.length(); i++)
