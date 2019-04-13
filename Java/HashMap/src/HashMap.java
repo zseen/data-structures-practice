@@ -22,19 +22,19 @@ public class HashMap
 
     public Integer get(String key)
     {
-		int index = getHashedKey(key);
+        int index = getHashedKey(key);
 
-		Node currentNode = hashTable[index];
-		while (currentNode != null)
-		{
-			if (currentNode.word == key)
-			{
-				return currentNode.number;
-			}
+        Node currentNode = hashTable[index];
+        while (currentNode != null)
+        {
+            if (currentNode.word == key)
+            {
+                return currentNode.number;
+            }
 
-			currentNode = currentNode.next;
-		}
-        
+            currentNode = currentNode.next;
+        }
+
         return null;
     }
 
@@ -51,7 +51,7 @@ public class HashMap
 
     public static void main(String[] args)
     {
-    	HashMap hm = new HashMap();
+        HashMap hm = new HashMap();
         hm.add("tac", 2);
         hm.add("cat", 3);
         hm.add("dog", 4);
