@@ -1,14 +1,14 @@
 public class Node
 {
-    String word;
-    int number;
+    String key;
+    int value;
     public Node next;
 
-    public static Node createNode(String word, int number)
+    public static Node createNode(String key, int value)
     {
         Node newNode = new Node();
-        newNode.word = word;
-        newNode.number = number;
+        newNode.key = key;
+        newNode.value = value;
         return newNode;
     }
 }
