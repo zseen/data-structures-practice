@@ -27,9 +27,9 @@ public class HashMap
         Node currentNode = hashTable[index];
         while (currentNode != null)
         {
-            if (currentNode.word == key)
+            if (currentNode.key == key)
             {
-                return currentNode.number;
+                return currentNode.value;
             }
 
             currentNode = currentNode.next;
