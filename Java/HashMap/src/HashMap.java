@@ -38,7 +38,9 @@ public class HashMap
         return null;
     }
 
-    private int getHashedKey(String word) // This hash function is pretty rudimentary, it gives the same result for anagrams, and also for e.g., “az” and “by”
+    // This hash function is pretty rudimentary
+    // It gives the same result for anagrams, and also for e.g., “az” and “by”
+    private int getHashedKey(String word) 
     {
         int sum = 0;
         for (int i = 0; i < word.length(); i++)
