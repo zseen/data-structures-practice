@@ -4,10 +4,10 @@ public class HashMap
 
     private Node[] hashTable = new Node[hashSize];
 
-    public void add(String key, int value)
+    public void add(String key, Object value)
     {
         int index = getHashedKey(key);
-        Node currentNode = Node.createNode(key, value);
+        Node currentNode = Node.createNode(key, String.valueOf(value));
 
         if (hashTable[index] == null)
         {
@@ -20,7 +20,7 @@ public class HashMap
         }
     }
 
-    public Integer get(String key)
+    public String get(String key)
     {
         int index = getHashedKey(key);
 
@@ -52,10 +52,12 @@ public class HashMap
     public static void main(String[] args)
     {
         HashMap hm = new HashMap();
-        hm.add("tac", 2);
+        hm.add("tac", "2");
         hm.add("cat", 3);
-        hm.add("dog", 4);
+        hm.add("dog", 4.12);
         System.out.println(hm.get("cat"));
+        System.out.println(hm.get("dog"));
+        System.out.println(hm.get("tac"));
         System.out.println(hm.get("c"));
     }
 }

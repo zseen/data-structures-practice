@@ -1,10 +1,10 @@
 public class Node
 {
     String key;
-    int value;
+    String value;
     public Node next;
 
-    public static Node createNode(String key, int value)
+    public static Node createNode(String key, String value)
     {
         Node newNode = new Node();
         newNode.key = key;
