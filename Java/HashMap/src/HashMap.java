@@ -20,7 +20,7 @@ public class HashMap
         }
     }
 
-    public String get(String key)
+    public Pair get(String key)
     {
         int index = getHashedKey(key);
 
@@ -29,13 +29,15 @@ public class HashMap
         {
             if (currentNode.key == key)
             {
-                return currentNode.value;
+               Pair pair = new Pair(true, currentNode.value);
+               return pair;
             }
 
             currentNode = currentNode.next;
         }
 
-        return null;
+        Pair pair = new Pair(false, null);
+        return pair;
     }
 
     // This hash function is pretty rudimentary
