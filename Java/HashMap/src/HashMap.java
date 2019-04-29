@@ -4,7 +4,7 @@ public class HashMap
 
     private Node[] hashTable = new Node[hashSize];
 
-    public void add(String key, String value)
+	public void add(String key, String value)
     {
         int index = getHashedKey(key);
         Node currentNode = Node.createNode(key, value);
@@ -20,7 +20,7 @@ public class HashMap
         }
     }
 
-    public Pair get(String key)
+    public Pair<Boolean, String> get(String key)
     {
         int index = getHashedKey(key);
 
@@ -29,14 +29,14 @@ public class HashMap
         {
             if (currentNode.key == key)
             {
-               Pair pair = new Pair(true, currentNode.value);
+               Pair<Boolean, String> pair = new Pair<Boolean, String>(true, currentNode.value);
                return pair;
             }
 
             currentNode = currentNode.next;
         }
 
-        Pair pair = new Pair(false, null);
+        Pair<Boolean, String> pair = new Pair<Boolean, String>(false, null);
         return pair;
     }
 
@@ -58,9 +58,11 @@ public class HashMap
         HashMap hm = new HashMap();
         hm.add("tac", "2");
         hm.add("cat", "3");
+        hm.add("bunny", "null");
         System.out.println(hm.get("cat"));
         System.out.println(hm.get("tac"));
         System.out.println(hm.get("c"));
+        System.out.println(hm.get("bunny"));
     }
 }
 

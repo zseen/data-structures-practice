@@ -1,11 +1,18 @@
-public class Pair<X, Y>
+@SuppressWarnings("hiding")
+public class Pair<Boolean, String>
 { 
-    public final X x; 
-    public final Y y; 
-    public Pair(X x, Y y)
+    @Override
+	public java.lang.String toString()
+    {
+		return "(" + isInHashTable + ", " + value + ")";
+	}
+    
+	public final Boolean isInHashTable; 
+    public final String value; 
+    public Pair(Boolean isInHashTable, String value)
     { 
-        this.x = x; 
-        this.y = y; 
+        this.isInHashTable = isInHashTable; 
+        this.value = value; 
     }
 }
    
