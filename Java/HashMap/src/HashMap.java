@@ -6,7 +6,7 @@ public class HashMap
 
     private Node[] hashTable = new Node[hashSize];
 
-	public void add(String key, String value)
+    public void add(String key, String value)
     {
         int index = getHashedKey(key);
         Node currentNode = Node.createNode(key, value);
@@ -25,15 +25,15 @@ public class HashMap
     public Optional<String> get(String key)
     {
         int index = getHashedKey(key);
-        
+
 
         Node currentNode = hashTable[index];
         while (currentNode != null)
         {
             if (currentNode.key == key)
             {
-            	Optional<String> val = Optional.ofNullable(currentNode.value);
-            	return val;
+                Optional<String> val = Optional.ofNullable(currentNode.value);
+                return val;
             }
 
             currentNode = currentNode.next;
@@ -45,7 +45,7 @@ public class HashMap
 
     // This hash function is pretty rudimentary
     // It gives the same result for anagrams, and also for e.g., “az” and “by”
-    private int getHashedKey(String word) 
+    private int getHashedKey(String word)
     {
         int sum = 0;
         for (int i = 0; i < word.length(); i++)
