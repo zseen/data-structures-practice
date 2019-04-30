@@ -60,10 +60,10 @@ public class HashMap
         hm.add("tac", "2");
         hm.add("cat", "3");
         hm.add("bunny", null);
-        System.out.println(hm.get("cat"));
-        System.out.println(hm.get("tac"));
-        System.out.println(hm.get("c"));
-        System.out.println(hm.get("bunny"));
+        System.out.println(hm.get("cat").value);
+        System.out.println(hm.get("tac").value);
+        System.out.println(hm.get("c").value);
+        System.out.println(hm.get("bunny").value);
     }
 }
 
