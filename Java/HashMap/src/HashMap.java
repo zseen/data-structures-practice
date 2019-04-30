@@ -22,7 +22,7 @@ public class HashMap
         }
     }
 
-    public IsPresentAndValue get(String key)
+    public Optional<String> get(String key)
     {
         int index = getHashedKey(key);
         
@@ -32,13 +32,15 @@ public class HashMap
         {
             if (currentNode.key == key)
             {
-            	return new IsPresentAndValue(true, currentNode.value);
+            	Optional<String> val = Optional.ofNullable(currentNode.value);
+            	return val;
             }
 
             currentNode = currentNode.next;
         }
 
-        return new IsPresentAndValue(false, null);
+        Optional<String> val = Optional.ofNullable(null);
+        return val;
     }
 
     // This hash function is pretty rudimentary
@@ -60,10 +62,10 @@ public class HashMap
         hm.add("tac", "2");
         hm.add("cat", "3");
         hm.add("bunny", null);
-        System.out.println(hm.get("cat").value);
-        System.out.println(hm.get("tac").value);
-        System.out.println(hm.get("c").value);
-        System.out.println(hm.get("bunny").value);
+        System.out.println(hm.get("cat"));
+        System.out.println(hm.get("tac"));
+        System.out.println(hm.get("c"));
+        System.out.println(hm.get("bunny"));
     }
 }
 
