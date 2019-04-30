@@ -1,3 +1,5 @@
+import java.util.Optional;
+
 public class HashMap
 {
     private static final int hashSize = 100;
@@ -20,24 +22,23 @@ public class HashMap
         }
     }
 
-    public Pair<Boolean, String> get(String key)
+    public IsPresentAndValue get(String key)
     {
         int index = getHashedKey(key);
+        
 
         Node currentNode = hashTable[index];
         while (currentNode != null)
         {
             if (currentNode.key == key)
             {
-               Pair<Boolean, String> pair = new Pair<Boolean, String>(true, currentNode.value);
-               return pair;
+            	return new IsPresentAndValue(true, currentNode.value);
             }
 
             currentNode = currentNode.next;
         }
 
-        Pair<Boolean, String> pair = new Pair<Boolean, String>(false, null);
-        return pair;
+        return new IsPresentAndValue(false, null);
     }
 
     // This hash function is pretty rudimentary
@@ -58,7 +59,7 @@ public class HashMap
         HashMap hm = new HashMap();
         hm.add("tac", "2");
         hm.add("cat", "3");
-        hm.add("bunny", "null");
+        hm.add("bunny", null);
         System.out.println(hm.get("cat"));
         System.out.println(hm.get("tac"));
         System.out.println(hm.get("c"));
