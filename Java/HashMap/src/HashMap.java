@@ -1,5 +1,3 @@
-import java.util.Optional;
-
 public class HashMap
 {
     private static final int hashSize = 100;
@@ -22,25 +20,22 @@ public class HashMap
         }
     }
 
-    public Optional<String> get(String key)
+    public IsPresentAndValue get(String key)
     {
         int index = getHashedKey(key);
-
 
         Node currentNode = hashTable[index];
         while (currentNode != null)
         {
             if (currentNode.key == key)
             {
-                Optional<String> val = Optional.ofNullable(currentNode.value);
-                return val;
+                return new IsPresentAndValue(currentNode.value);
             }
 
             currentNode = currentNode.next;
         }
 
-        Optional<String> val = Optional.ofNullable(null);
-        return val;
+        return new IsPresentAndValue();
     }
 
     // This hash function is pretty rudimentary
@@ -62,10 +57,13 @@ public class HashMap
         hm.add("tac", "2");
         hm.add("cat", "3");
         hm.add("bunny", null);
-        System.out.println(hm.get("cat"));
-        System.out.println(hm.get("tac"));
-        System.out.println(hm.get("c"));
-        System.out.println(hm.get("bunny"));
+        //System.out.println(hm.get("cat"));
+        //System.out.println(hm.get("tac"));
+        //System.out.println(hm.get("c"));
+        //System.out.println(hm.get("bunny"));
+
+        IsPresentAndValue ipv = hm.get("bun");
+        System.out.println(ipv.getValue());
     }
 }
 
