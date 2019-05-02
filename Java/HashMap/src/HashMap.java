@@ -39,7 +39,7 @@ public class HashMap
     }
 
     // This hash function is pretty rudimentary
-    // It gives the same result for anagrams, and also for e.g., “az” and “by”
+    // It gives the same result for anagrams, and also for e.g., "az" and “by”
     private int getHashedKey(String word)
     {
         int sum = 0;
@@ -57,21 +57,16 @@ public class HashMap
         hm.add("tac", "2");
         hm.add("cat", "3");
         hm.add("bunny", null);
-        //System.out.println(hm.get("cat"));
-        //System.out.println(hm.get("tac"));
-        //System.out.println(hm.get("c"));
-        //System.out.println(hm.get("bunny"));
 
         IsPresentAndValue ipv = hm.get("bun");
         if(ipv.isPresent())
         {
-        	System.out.println(ipv.getValue());
+            System.out.println(ipv.getValue());
         }
         else
         {
-        	System.out.println("Item not present.");
+            System.out.println("Item not present.");
         }
-        
     }
 }
 
