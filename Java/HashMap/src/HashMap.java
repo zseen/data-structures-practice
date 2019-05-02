@@ -63,7 +63,15 @@ public class HashMap
         //System.out.println(hm.get("bunny"));
 
         IsPresentAndValue ipv = hm.get("bun");
-        System.out.println(ipv.getValue());
+        if(ipv.isPresent())
+        {
+        	System.out.println(ipv.getValue());
+        }
+        else
+        {
+        	System.out.println("Item not present.");
+        }
+        
     }
 }
 

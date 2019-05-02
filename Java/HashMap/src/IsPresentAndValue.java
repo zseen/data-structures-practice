@@ -1,7 +1,7 @@
 public class IsPresentAndValue
 {
     private boolean isPresent;
-    public String value;
+    private String value;
 
     public IsPresentAndValue(String value)
     {
@@ -23,6 +23,12 @@ public class IsPresentAndValue
     public void reset()
     {
         isPresent = false;
+    }
+
+    public void setValue(String value)
+    {
+        this.value = value;
+        this.isPresent = true;
     }
 
     public String getValue()
