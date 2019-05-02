@@ -4,10 +4,10 @@ public class HashMap
 
     private Node[] hashTable = new Node[hashSize];
 
-    public void add(String key, Object value)
+    public void add(String key, String value)
     {
         int index = getHashedKey(key);
-        Node currentNode = Node.createNode(key, String.valueOf(value));
+        Node currentNode = Node.createNode(key, value);
 
         if (hashTable[index] == null)
         {
@@ -20,7 +20,7 @@ public class HashMap
         }
     }
 
-    public String get(String key)
+    public IsPresentAndValue get(String key)
     {
         int index = getHashedKey(key);
 
@@ -29,16 +29,18 @@ public class HashMap
         {
             if (currentNode.key == key)
             {
-                return currentNode.value;
+                return new IsPresentAndValue(currentNode.value);
             }
 
             currentNode = currentNode.next;
         }
 
-        return null;
+        return new IsPresentAndValue();
     }
 
-    private int getHashedKey(String word)  // This hash function is pretty rudimentary, it gives the same result for anagrams, and also for e.g., “az” and “by” 
+    // This hash function is pretty rudimentary
+    // It gives the same result for anagrams, and also for e.g., "az" and "by"
+    private int getHashedKey(String word)
     {
         int sum = 0;
         for (int i = 0; i < word.length(); i++)
@@ -53,12 +55,18 @@ public class HashMap
     {
         HashMap hm = new HashMap();
         hm.add("tac", "2");
-        hm.add("cat", 3);
-        hm.add("dog", 4.12);
-        System.out.println(hm.get("cat"));
-        System.out.println(hm.get("dog"));
-        System.out.println(hm.get("tac"));
-        System.out.println(hm.get("c"));
+        hm.add("cat", "3");
+        hm.add("bunny", null);
+
+        IsPresentAndValue ipv = hm.get("bun");
+        if(ipv.isPresent())
+        {
+            System.out.println(ipv.getValue());
+        }
+        else
+        {
+            System.out.println("Item not present.");
+        }
     }
 }
 
