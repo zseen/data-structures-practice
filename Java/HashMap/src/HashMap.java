@@ -39,7 +39,7 @@ public class HashMap
     }
 
     // This hash function is pretty rudimentary
-    // It gives the same result for anagrams, and also for e.g., "az" and “by”
+    // It gives the same result for anagrams, and also for e.g., "az" and "by"
     private int getHashedKey(String word)
     {
         int sum = 0;
