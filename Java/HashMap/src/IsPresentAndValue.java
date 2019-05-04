@@ -1,9 +1,9 @@
-public class IsPresentAndValue
+public class IsPresentAndValue<T>
 {
     private boolean isPresent;
-    private String value;
+    private T value;
 
-    public IsPresentAndValue(String value)
+    public IsPresentAndValue(T value)
     {
         this.value = value;
         this.isPresent = true;
@@ -25,13 +25,13 @@ public class IsPresentAndValue
         isPresent = false;
     }
 
-    public void setValue(String value)
+    public void setValue(T value)
     {
         this.value = value;
         this.isPresent = true;
     }
 
-    public String getValue()
+    public T getValue()
     {
         if(!isPresent)
         {

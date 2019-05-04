@@ -20,7 +20,7 @@ public class HashMap
         }
     }
 
-    public IsPresentAndValue get(String key)
+    public IsPresentAndValue<String> get(String key)
     {
         int index = getHashedKey(key);
 
@@ -29,13 +29,13 @@ public class HashMap
         {
             if (currentNode.key == key)
             {
-                return new IsPresentAndValue(currentNode.value);
+                return new IsPresentAndValue<String>(currentNode.value);
             }
 
             currentNode = currentNode.next;
         }
 
-        return new IsPresentAndValue();
+        return new IsPresentAndValue<String>();
     }
 
     // This hash function is pretty rudimentary
@@ -58,7 +58,7 @@ public class HashMap
         hm.add("cat", "3");
         hm.add("bunny", null);
 
-        IsPresentAndValue ipv = hm.get("bun");
+        IsPresentAndValue<String> ipv = hm.get("bun");
         if(ipv.isPresent())
         {
             System.out.println(ipv.getValue());

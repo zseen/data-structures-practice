@@ -8,14 +8,14 @@ class IsPresentAndValueTest
     @Test
     void test_createNewIVPInstance_isPresentIsFalse()
     {
-        IsPresentAndValue ivp = new IsPresentAndValue();
+        IsPresentAndValue<?> ivp = new IsPresentAndValue<Object>();
         assertEquals(ivp.isPresent(), false);
     }
 
     @Test
     void test_setValue_isPresentIsTrue()
     {
-        IsPresentAndValue ivp = new IsPresentAndValue();
+        IsPresentAndValue<String> ivp = new IsPresentAndValue<String>();
         ivp.setValue("piggy");
         assertEquals(ivp.isPresent(), true);
     }
@@ -23,7 +23,7 @@ class IsPresentAndValueTest
     @Test
     void test_setValue_getValueEqualsSetValue()
     {
-        IsPresentAndValue ivp = new IsPresentAndValue();
+        IsPresentAndValue<String> ivp = new IsPresentAndValue<String>();
         ivp.setValue("pig");
         assertEquals(ivp.getValue(), "pig");
     }
@@ -31,7 +31,7 @@ class IsPresentAndValueTest
     @Test
     void test_reset_isPresentIsFalse()
     {
-        IsPresentAndValue ivp = new IsPresentAndValue();
+        IsPresentAndValue<String> ivp = new IsPresentAndValue<String>();
         ivp.setValue("wild boar");
         assertEquals(ivp.isPresent(), true);
         assertEquals("wild boar", ivp.getValue());
