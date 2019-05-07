@@ -8,7 +8,7 @@ class IsPresentAndValueTest
     @Test
     void test_createNewIVPInstance_isPresentIsFalse()
     {
-        IsPresentAndValue<?> ivp = new IsPresentAndValue<Object>();
+        IsPresentAndValue<String> ivp = new IsPresentAndValue<Object>();
         assertEquals(ivp.isPresent(), false);
     }
 
